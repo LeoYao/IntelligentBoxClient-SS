@@ -4,6 +4,7 @@ package intelligentBoxClient.ss;
  * Created by yaohx on 3/22/2016.
  */
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 
@@ -16,6 +17,8 @@ import com.dropbox.core.DbxWebAuthNoRedirect;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.*;
 import com.dropbox.core.v2.users.FullAccount;
+import intelligentBoxClient.ss.dao.SqliteContext;
+import org.sqlite.SQLiteErrorCode;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -115,6 +118,31 @@ public class SychronizationService {
             DbxAuthInfo.Writer.writeToStream(authInfo, System.err);
             System.exit(1);
             return;
+        }
+    }
+
+    static void sqlite(){
+        SqliteContext ctx = new SqliteContext();
+        try {
+            ctx.connect("test.db");
+            ctx.query();
+            System.out.println("------------------");
+            ctx.tx_insert();
+            ctx.query();
+            System.out.println("------------------");
+            ctx.insert();
+            ctx.query();
+            System.out.println("------------------");
+        } catch (SQLException e) {
+            if (SQLiteErrorCode.SQLITE_BUSY.code == e.getErrorCode()) {
+                System.out.println("locked");
+            } else {
+                e.printStackTrace();
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            ctx.disconnect();
         }
     }
 }
