@@ -1,4 +1,4 @@
-package intelligentBoxClient.ss.components;
+package intelligentBoxClient.ss.listeners;
 
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
@@ -12,6 +12,6 @@ public class StopListener implements ApplicationListener<ContextClosedEvent> {
 
     @Override
     public void onApplicationEvent(final ContextClosedEvent event) {
-        //System.out.println("Stopped: " + event);
+
     }
 }

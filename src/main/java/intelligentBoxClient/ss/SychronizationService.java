@@ -17,6 +17,11 @@ import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.*;
 import com.dropbox.core.v2.users.FullAccount;
 import intelligentBoxClient.ss.dao.SqliteContext;
+import intelligentBoxClient.ss.messages.RegistrationRequest;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import org.sqlite.SQLiteErrorCode;
 
 import java.io.BufferedReader;
@@ -26,11 +31,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+@SpringBootApplication
 public class SychronizationService {
     private static String ACCESS_TOKEN = "SP6T7Dx26-AAAAAAAAAACb1_4Pj9I2QicCPlRuQk-WEB3JVGwTApOZJcPE24ImNw";
 
     public static void main(String args[]) throws DbxException, IOException {
-        demo();
+        //demo();
+        //testRest();
+
+        SpringApplication.run(SychronizationService.class, args);
+    }
+
+    public static void testRest()
+    {
+
+        RestTemplate restTemplate = new RestTemplate();
+        RegistrationRequest request = new RegistrationRequest();
+        request.setAccountId("id1");
+        request.setCallbackUrl("localhost:8080");
+        ResponseEntity<Object> response = restTemplate.postForEntity("http://localhost:8888/register", request, Object.class);
+        System.out.println(response.getStatusCode());
     }
 
     public static void demo() throws FileNotFoundException, IOException, UploadErrorException, DbxException {

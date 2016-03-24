@@ -1,0 +1,30 @@
+<!-- http://logback.qos.ch/manual/configuration.html -->
+<!-- http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/java-dg-logging.html -->
+
+<configuration>
+
+    <!--
+        <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+            <file>logs.log</file>
+            <append>true</append>
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg %ex%n</pattern>
+            </encoder>
+        </appender>
+    -->
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%method] %-5level %logger{36} - %msg %ex%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <root level="WARN">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+    <logger name="intelligentBoxClient" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+</configuration>
