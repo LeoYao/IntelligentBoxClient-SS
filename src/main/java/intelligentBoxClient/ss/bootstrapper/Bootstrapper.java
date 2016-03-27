@@ -1,6 +1,7 @@
 package intelligentBoxClient.ss.bootstrapper;
 
 import com.dropbox.core.DbxException;
+import intelligentBoxClient.ss.workers.ISychronizationWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +14,25 @@ import java.io.IOException;
 public class Bootstrapper {
 
     private IRegistrator _registrator;
+    private ISychronizationWorker _sychronizationWorker;
 
     @Autowired
-    public Bootstrapper(IRegistrator registrator)
+    public Bootstrapper(IRegistrator registrator, ISychronizationWorker sychronizationWorker)
     {
         _registrator = registrator;
+        _sychronizationWorker = sychronizationWorker;
     }
 
-    public void startup() throws IOException, DbxException {
-        _registrator.register();
+    public boolean startup() {
+
+        return _registrator.register() && _sychronizationWorker.start();
+    }
+
+    public boolean shutdown()
+    {
+        boolean result = true;
+        result &= _registrator.unregister();
+        _sychronizationWorker.stop();
+        return result;
     }
 }

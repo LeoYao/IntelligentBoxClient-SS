@@ -21,16 +21,11 @@ public class RefreshListener implements ApplicationListener<ContextRefreshedEven
 
     @Override
     public void onApplicationEvent(final ContextRefreshedEvent event) {
-        System.out.println("Refreshed:" + event);
         ApplicationContext appCtx = event.getApplicationContext();
         Bootstrapper bootstrapper = appCtx.getBean(Bootstrapper.class);
-        try {
-            bootstrapper.startup();
-        }
-        catch (Exception e)
-        {
-            logger.fatal("Failed to start up.", e);
 
+        if (!bootstrapper.startup()) {
+            logger.fatal("Failed to start up.");
             SpringApplication.exit(appCtx, new AbortExitCodeGenerator());
         }
     }

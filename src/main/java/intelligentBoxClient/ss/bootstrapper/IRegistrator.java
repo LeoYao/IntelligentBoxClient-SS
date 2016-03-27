@@ -9,5 +9,6 @@ import java.io.IOException;
  */
 public interface IRegistrator {
 
-    void register() throws IOException, DbxException;
+    boolean register();
+    boolean unregister();
 }

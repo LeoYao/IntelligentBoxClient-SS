@@ -5,7 +5,10 @@ import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.users.FullAccount;
 import intelligentBoxClient.ss.messages.RegistrationRequest;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -24,26 +27,76 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class Registrator implements IRegistrator {
 
+    private static Log logger = LogFactory.getLog(Registrator.class);
+
     @Autowired
     private Configuration _configuration;
 
 
-    public void register() throws IOException, DbxException {
+    public boolean register() {
 
         if (_configuration.getDevFlag())
         {
-            return;
+            return true;
         }
 
-        RestTemplate restTemplate = new RestTemplate();
-        RegistrationRequest request = new RegistrationRequest();
-        request.setAccountId(getAccountId());
-        request.setCallbackUrl(getListenerUrl());
-        ResponseEntity<Object> response =
-                restTemplate.postForEntity("http://" + _configuration.getCnsUrl() + "/register",
-                                            request,
-                                            Object.class);
-        System.out.println(response.getStatusCode());
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            RegistrationRequest request = new RegistrationRequest();
+            String accountId = getAccountId();
+            String callbackUrl = getCallbackUrl();
+            request.setAccountId(accountId);
+            request.setCallbackUrl(callbackUrl);
+            ResponseEntity<Object> response =
+                    restTemplate.postForEntity("http://" + _configuration.getCnsUrl() + "/register",
+                            request,
+                            Object.class);
+            if (HttpStatus.OK != response.getStatusCode()) {
+                logger.error("Failed to register on CNS. HTTP Status Code: "
+                        + response.getStatusCode());
+                return false;
+            }
+        }
+        catch (DbxException e)
+        {
+            logger.error(e);
+            return false;
+        }
+        catch (IOException e)
+        {
+            logger.error(e);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean unregister()
+    {
+        if (_configuration.getDevFlag())
+        {
+            return true;
+        }
+
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            RegistrationRequest request = new RegistrationRequest();
+            request.setAccountId(getAccountId());
+            ResponseEntity<Object> response =
+                    restTemplate.postForEntity("http://" + _configuration.getCnsUrl() + "/unregister",
+                            request,
+                            Object.class);
+            if (HttpStatus.OK != response.getStatusCode()) {
+                logger.error("Failed to register on CNS. HTTP Status Code: "
+                        + response.getStatusCode());
+                return false;
+            }
+        }
+         catch (DbxException e) {
+             logger.error(e);
+             return false;
+        }
+
+        return true;
     }
 
     private String getAccountId() throws DbxException {
@@ -74,7 +127,7 @@ public class Registrator implements IRegistrator {
         }
     }
 
-    private String getListenerUrl() throws IOException {
+    private String getCallbackUrl() throws IOException {
         return getCurrentHost() + ":" + _configuration.getServerPort();
     }
 }
