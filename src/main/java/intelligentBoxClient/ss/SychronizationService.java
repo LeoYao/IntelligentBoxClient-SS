@@ -181,6 +181,7 @@ public class SychronizationService {
         }
     }
 
+    /*
     static void sqlite(){
         SqliteContext ctx = new SqliteContext();
         try {
@@ -205,4 +206,5 @@ public class SychronizationService {
             ctx.disconnect();
         }
     }
+    */
 }

@@ -1,2 +1,6 @@
 cnsUrl=
 accessKey=
+server.port=8080
+dev=true
+root_path=
+sqlite_dir_db_file_name=

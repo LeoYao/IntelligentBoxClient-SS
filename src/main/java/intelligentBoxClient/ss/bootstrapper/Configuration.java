@@ -21,6 +21,12 @@ public class Configuration {
     @Value("${dev:false}")
     private boolean _dev;
 
+    @Value("${root_path}")
+    private String _rootPath;
+
+    @Value("${sqlite_dir_db_file_name}")
+    private String _dirDbFilename;
+
     public String getCnsUrl(){
         return _cnsUrl;
     }
@@ -36,5 +42,19 @@ public class Configuration {
     public boolean getDevFlag()
     {
         return _dev;
+    }
+
+    public String getRootPath() {
+        return _rootPath;
+    }
+
+    public String getDirDbFileName()
+    {
+        return _dirDbFilename;
+    }
+
+    public String getDirDbFilePath()
+    {
+        return _rootPath + "metadata/" + _dirDbFilename;
     }
 }
