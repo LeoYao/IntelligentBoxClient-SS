@@ -4,7 +4,8 @@ package intelligentBoxClient.ss;
  * Created by yaohx on 3/22/2016.
  */
 
-import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Locale;
 
 import com.dropbox.core.DbxAppInfo;
@@ -17,12 +18,14 @@ import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.*;
 import com.dropbox.core.v2.users.FullAccount;
 import intelligentBoxClient.ss.dao.SqliteContext;
+import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
 import intelligentBoxClient.ss.messages.RegistrationRequest;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import org.sqlite.SQLiteErrorCode;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -35,10 +38,12 @@ import java.io.InputStreamReader;
 public class SychronizationService {
     private static String ACCESS_TOKEN = "SP6T7Dx26-AAAAAAAAAACb1_4Pj9I2QicCPlRuQk-WEB3JVGwTApOZJcPE24ImNw";
 
+    private static Log logger = LogFactory.getLog(SychronizationService.class);
+
     public static void main(String args[]) throws DbxException, IOException {
         //demo();
         //testRest();
-
+        testSqlite();
         SpringApplication.run(SychronizationService.class, args);
     }
 
@@ -207,4 +212,44 @@ public class SychronizationService {
         }
     }
     */
+
+    public static void testSqlite()
+    {
+        try {
+            SqliteContext ctx = new SqliteContext();
+            ctx.open("C:\\Dev_Repos\\ss\\metadata\\dir.db");
+            logger.debug("Tx is beginning..");
+            ctx.beginTransaction(1, 1);
+            logger.debug("Tx is begun..");
+
+            ctx.deleteFile("/a/c");
+
+            DirectoryEntity entity = new DirectoryEntity();
+            entity.setFullPath("/a/c");
+            entity.setParentFolderFullPath("/a");
+            entity.setEntryName("c");
+            entity.setType(2);
+            entity.setSize(Long.MAX_VALUE);
+            entity.setMtime(new Timestamp(new Date().getTime()));
+            entity.setAtime(new Timestamp(new Date().getTime()));
+            entity.setLocked(0);
+            entity.setModified(1);
+            entity.setLocal(1);
+            entity.setInUseCount(100);
+
+            logger.debug(entity.getAtime());
+            ctx.insertFile(entity);
+            logger.debug(entity.getAtime());
+
+            DirectoryEntity entity2 = ctx.querySingleFile("/a/c");
+            logger.debug(entity2.getAtime());
+            ctx.commitTransaction();
+            logger.debug("Tx is commited..");
+        }
+        catch (Exception e)
+        {
+            logger.error(e);
+        }
+
+    }
 }
