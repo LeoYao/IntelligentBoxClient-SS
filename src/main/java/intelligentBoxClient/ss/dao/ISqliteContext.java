@@ -14,9 +14,4 @@ public interface ISqliteContext {
     void beginTransaction(int maxRetryTimes, int retryInterval) throws SQLException, InterruptedException;
     void commitTransaction() throws SQLException;
     void rollbackTransaction() throws SQLException;
-    DirectoryEntity querySingleFile(String fullPath) throws SQLException;
-    List<DirectoryEntity> queryFiles(String parentFolderFullPath) throws SQLException;
-    int updateFile(DirectoryEntity entry) throws SQLException;
-    int insertFile(DirectoryEntity entry) throws SQLException;
-    int deleteFile(String fullPath) throws SQLException;
 }

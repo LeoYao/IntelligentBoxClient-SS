@@ -3,7 +3,9 @@ package intelligentBoxClient.ss.bootstrapper;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.Metadata;
 import com.dropbox.core.v2.users.FullAccount;
+import intelligentBoxClient.ss.dropbox.DropboxClient;
 import intelligentBoxClient.ss.messages.RegistrationRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,10 +31,15 @@ public class Registrator implements IRegistrator {
 
     private static Log logger = LogFactory.getLog(Registrator.class);
 
-    @Autowired
     private Configuration _configuration;
+    private DropboxClient _client;
 
-
+    @Autowired
+    public Registrator(Configuration configuration, DropboxClient client)
+    {
+        _configuration = configuration;
+        _client = client;
+    }
     public boolean register() {
 
         if (_configuration.getDevFlag())
@@ -44,6 +51,9 @@ public class Registrator implements IRegistrator {
             RestTemplate restTemplate = new RestTemplate();
             RegistrationRequest request = new RegistrationRequest();
             String accountId = getAccountId();
+            if (accountId == null) {
+                return false;
+            }
             String callbackUrl = getCallbackUrl();
             request.setAccountId(accountId);
             request.setCallbackUrl(callbackUrl);
@@ -57,11 +67,6 @@ public class Registrator implements IRegistrator {
                 return false;
             }
         }
-        catch (DbxException e)
-        {
-            logger.error(e);
-            return false;
-        }
         catch (IOException e)
         {
             logger.error(e);
@@ -70,43 +75,43 @@ public class Registrator implements IRegistrator {
         return true;
     }
 
-    public boolean unregister()
-    {
-        if (_configuration.getDevFlag())
-        {
+    public boolean unregister() {
+        if (_configuration.getDevFlag()) {
             return true;
         }
 
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            RegistrationRequest request = new RegistrationRequest();
-            request.setAccountId(getAccountId());
-            ResponseEntity<Object> response =
-                    restTemplate.postForEntity("http://" + _configuration.getCnsUrl() + "/unregister",
-                            request,
-                            Object.class);
-            if (HttpStatus.OK != response.getStatusCode()) {
-                logger.error("Failed to register on CNS. HTTP Status Code: "
-                        + response.getStatusCode());
-                return false;
-            }
+        RestTemplate restTemplate = new RestTemplate();
+        RegistrationRequest request = new RegistrationRequest();
+        String accountId = getAccountId();
+        if (accountId == null)
+        {
+            return false;
         }
-         catch (DbxException e) {
-             logger.error(e);
-             return false;
+
+        request.setAccountId(accountId);
+        ResponseEntity<Object> response =
+                restTemplate.postForEntity("http://" + _configuration.getCnsUrl() + "/unregister",
+                        request,
+                        Object.class);
+        if (HttpStatus.OK != response.getStatusCode()) {
+            logger.error("Failed to register on CNS. HTTP Status Code: "
+                    + response.getStatusCode());
+            return false;
         }
 
         return true;
     }
 
-    private String getAccountId() throws DbxException {
-        String accessKey = _configuration.getAccessKey();
+    private String getAccountId()  {
+        String accountId = null;
 
-        DbxRequestConfig config = new DbxRequestConfig("registration/getAccountId", "en_US");
+        try {
+            accountId = _client.getAccountId();
+        } catch (DbxException e) {
+            logger.error("Failed to get account ID.", e);
+        }
 
-        DbxClientV2 client = new DbxClientV2(config, accessKey);
-        FullAccount account = client.users().getCurrentAccount();
-        return account.getAccountId();
+        return accountId;
     }
 
     private String getCurrentHost() throws IOException {

@@ -12,9 +12,6 @@ public class Configuration {
     @Value("${cnsUrl}")
     private String _cnsUrl;
 
-    @Value("${accessKey}")
-    private String _accessKey;
-
     @Value("${server.port}")
     private int _serverPort;
 
@@ -27,12 +24,17 @@ public class Configuration {
     @Value("${sqlite_dir_db_file_name}")
     private String _dirDbFilename;
 
+    @Value("${sqlite_notif_db_file_name}")
+    private String _notifDbFilename;
+
+    @Value("${dropbox_token_file_name}")
+    private String _dbxTokenFileName;
+
+    @Value("${dropbox_cursor_file_name}")
+    private String _dbxCursorFileName;
+
     public String getCnsUrl(){
         return _cnsUrl;
-    }
-
-    public String getAccessKey(){
-        return _accessKey;
     }
 
     public int getServerPort(){
@@ -56,5 +58,20 @@ public class Configuration {
     public String getDirDbFilePath()
     {
         return _rootPath + "metadata/" + _dirDbFilename;
+    }
+
+    public String getNotifDbFilePath()
+    {
+        return _rootPath + "metadata/" + _notifDbFilename;
+    }
+
+    public String getDbxTokenFilePath()
+    {
+        return _rootPath + "metadata/" + _dbxTokenFileName;
+    }
+
+    public String getDbxCursorFilePath()
+    {
+        return _rootPath + "metadata/" + _dbxCursorFileName;
     }
 }

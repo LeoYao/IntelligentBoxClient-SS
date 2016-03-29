@@ -17,7 +17,7 @@ import com.dropbox.core.DbxWebAuthNoRedirect;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.*;
 import com.dropbox.core.v2.users.FullAccount;
-import intelligentBoxClient.ss.dao.SqliteContext;
+import intelligentBoxClient.ss.dao.DirectoryDbContext;
 import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
 import intelligentBoxClient.ss.messages.RegistrationRequest;
 import org.apache.commons.logging.Log;
@@ -35,16 +35,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 @SpringBootApplication
-public class SychronizationService {
+public class SynchronizationService {
     private static String ACCESS_TOKEN = "SP6T7Dx26-AAAAAAAAAACb1_4Pj9I2QicCPlRuQk-WEB3JVGwTApOZJcPE24ImNw";
 
-    private static Log logger = LogFactory.getLog(SychronizationService.class);
+    private static Log logger = LogFactory.getLog(SynchronizationService.class);
 
     public static void main(String args[]) throws DbxException, IOException {
         //demo();
         //testRest();
-        testSqlite();
-        SpringApplication.run(SychronizationService.class, args);
+        //testSqlite();
+        SpringApplication.run(SynchronizationService.class, args);
     }
 
     public static void testRest()
@@ -216,7 +216,7 @@ public class SychronizationService {
     public static void testSqlite()
     {
         try {
-            SqliteContext ctx = new SqliteContext();
+            DirectoryDbContext ctx = new DirectoryDbContext();
             ctx.open("C:\\Dev_Repos\\ss\\metadata\\dir.db");
             logger.debug("Tx is beginning..");
             ctx.beginTransaction(1, 1);

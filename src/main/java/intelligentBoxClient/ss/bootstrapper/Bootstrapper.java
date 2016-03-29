@@ -1,12 +1,12 @@
 package intelligentBoxClient.ss.bootstrapper;
 
-import com.dropbox.core.DbxException;
-import intelligentBoxClient.ss.dao.ISqliteContext;
-import intelligentBoxClient.ss.workers.ISychronizationWorker;
+import intelligentBoxClient.ss.dao.IDirectoryDbContext;
+import intelligentBoxClient.ss.dao.INotificationDbContext;
+import intelligentBoxClient.ss.dropbox.DropboxClient;
+import intelligentBoxClient.ss.dropbox.IDropboxClient;
+import intelligentBoxClient.ss.workers.ISynchronizationWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 /**
  * Created by yaohx on 3/24/2016.
@@ -15,35 +15,46 @@ import java.io.IOException;
 public class Bootstrapper {
 
     private IRegistrator _registrator;
-    private ISychronizationWorker _sychronizationWorker;
-    private ISqliteContext _sqliteContext;
+    private ISynchronizationWorker _synchronizationWorker;
+    private IDirectoryDbContext _directoryDbCtx;
+    private INotificationDbContext _notificationDbCtx;
     private Configuration _config;
+    private IDropboxClient _client;
 
     @Autowired
     public Bootstrapper(IRegistrator registrator,
-                        ISychronizationWorker sychronizationWorker,
-                        ISqliteContext sqliteContext,
+                        ISynchronizationWorker sychronizationWorker,
+                        IDirectoryDbContext directoryDbCtx,
+                        INotificationDbContext notificationDbCtx,
+                        IDropboxClient client,
                         Configuration config)
     {
         _registrator = registrator;
-        _sychronizationWorker = sychronizationWorker;
-        _sqliteContext = sqliteContext;
+        _synchronizationWorker = sychronizationWorker;
+        _notificationDbCtx = notificationDbCtx;
+        _directoryDbCtx = directoryDbCtx;
         _config = config;
+        _client = client;
     }
 
     public boolean startup() {
 
-        return _registrator.register()
-                && _sychronizationWorker.start()
-                && _sqliteContext.open(_config.getDirDbFilePath());
+        return _client.open()
+                && _directoryDbCtx.open(_config.getDirDbFilePath())
+                && _notificationDbCtx.open(_config.getNotifDbFilePath())
+                && _registrator.register()
+                && _synchronizationWorker.start()
+                ;
     }
 
     public boolean shutdown()
     {
         boolean result = true;
         result &= _registrator.unregister();
-        _sychronizationWorker.stop();
-        result &= _sqliteContext.close();
+        _synchronizationWorker.stop();
+        result &= _directoryDbCtx.close();
+        result &= _notificationDbCtx.close();
+        result &= _client.close();
         return result;
     }
 }
