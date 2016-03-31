@@ -18,7 +18,7 @@ public class Bootstrapper {
     private ISynchronizationWorker _synchronizationWorker;
     private IDirectoryDbContext _directoryDbCtx;
     private INotificationDbContext _notificationDbCtx;
-    private Configuration _config;
+    private IConfiguration _config;
     private IDropboxClient _client;
 
     @Autowired
@@ -27,7 +27,7 @@ public class Bootstrapper {
                         IDirectoryDbContext directoryDbCtx,
                         INotificationDbContext notificationDbCtx,
                         IDropboxClient client,
-                        Configuration config)
+                        IConfiguration config)
     {
         _registrator = registrator;
         _synchronizationWorker = sychronizationWorker;

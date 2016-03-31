@@ -31,11 +31,11 @@ public class Registrator implements IRegistrator {
 
     private static Log logger = LogFactory.getLog(Registrator.class);
 
-    private Configuration _configuration;
+    private IConfiguration _configuration;
     private DropboxClient _client;
 
     @Autowired
-    public Registrator(Configuration configuration, DropboxClient client)
+    public Registrator(IConfiguration configuration, DropboxClient client)
     {
         _configuration = configuration;
         _client = client;

@@ -1,5 +1,7 @@
 package intelligentBoxClient.ss.dao;
 
+import intelligentBoxClient.ss.bootstrapper.Configuration;
+import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,8 +20,13 @@ public abstract class SqliteContext implements ISqliteContext {
 
     protected Log logger = LogFactory.getLog(this.getClass());
 
+    protected IConfiguration _configuration = null;
     protected Connection _connection = null;
     private PreparedStatement _lockStatement;
+
+    public SqliteContext(IConfiguration configuration){
+        _configuration = configuration;
+    }
 
     public boolean open(String dbFile) {
         if (logger.isDebugEnabled()) {
@@ -69,28 +76,63 @@ public abstract class SqliteContext implements ISqliteContext {
         return true;
     }
 
-    public void beginTransaction(int maxRetryTimes, int retryInterval) throws SQLException, InterruptedException {
+    public boolean beginTransaction(int maxRetryTimes, int retryInterval) {
         for (int i = 0; i <= maxRetryTimes; ++i) {
             try {
                 _connection.setAutoCommit(false);
                 _lockStatement.executeUpdate();
+                return true;
             } catch (SQLException e) {
                 if (SQLiteErrorCode.SQLITE_BUSY.code != e.getErrorCode() || i >= maxRetryTimes) {
-                    throw e;
+                    logger.warn("Failed to begin a transaction.", e);
+                    return false;
                 }
-                Thread.sleep(retryInterval);
+                try {
+                    Thread.sleep(retryInterval);
+                }
+                catch (InterruptedException ex){
+                    logger.warn("Failed to sleep.", ex);
+                }
             }
         }
+
+        return false;
     }
 
-    public void commitTransaction() throws SQLException {
-        _connection.commit();
-        _connection.setAutoCommit(true);
+    public boolean beginTransaction(){
+        return beginTransaction(_configuration.getDbMaxRetryTimes(), _configuration.getDbMaxRetryTimes());
     }
 
-    public void rollbackTransaction() throws SQLException {
-        _connection.rollback();
-        _connection.setAutoCommit(true);
+    public boolean commitTransaction() {
+        try{
+            if (!_connection.getAutoCommit()) {
+                _connection.commit();
+                _connection.setAutoCommit(true);
+            }
+        }
+        catch (SQLException ex)
+        {
+            logger.warn("Failed to commit.", ex);
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean rollbackTransaction() {
+        try{
+            if (!_connection.getAutoCommit()) {
+                _connection.rollback();
+                _connection.setAutoCommit(true);
+            }
+        }
+        catch (SQLException ex)
+        {
+            logger.warn("Failed to rollback.", ex);
+            return false;
+        }
+
+        return true;
     }
 
     private void connect(String dbFile) throws ClassNotFoundException, SQLException {

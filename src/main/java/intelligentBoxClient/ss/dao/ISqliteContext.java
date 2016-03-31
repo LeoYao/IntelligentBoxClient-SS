@@ -11,7 +11,8 @@ import java.util.List;
 public interface ISqliteContext {
     boolean open(String dbFile);
     boolean close();
-    void beginTransaction(int maxRetryTimes, int retryInterval) throws SQLException, InterruptedException;
-    void commitTransaction() throws SQLException;
-    void rollbackTransaction() throws SQLException;
+    boolean beginTransaction(int maxRetryTimes, int retryInterval);
+    boolean beginTransaction();
+    boolean commitTransaction();
+    boolean rollbackTransaction();
 }

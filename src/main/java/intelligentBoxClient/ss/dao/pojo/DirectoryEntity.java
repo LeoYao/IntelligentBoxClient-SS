@@ -20,9 +20,9 @@ public class DirectoryEntity {
     private long _size;
     private Timestamp _mtime;
     private Timestamp _atime;
-    private int _isLocked;
-    private int _isModified;
-    private int _isLocal;
+    private boolean _isLocked;
+    private boolean _isModified;
+    private boolean _isLocal;
     private long _inUseCount;
 
 
@@ -73,6 +73,9 @@ public class DirectoryEntity {
     public void setMtime(Timestamp mtime) {
         this._mtime = mtime;
     }
+    public void setMtime(long mtime) {
+        this._mtime = new Timestamp(mtime);
+    }
 
     public Timestamp getAtime() {
         return _atime;
@@ -82,27 +85,31 @@ public class DirectoryEntity {
         this._atime = atime;
     }
 
-    public int isLocked() {
+    public void setAtime(long atime) {
+        this._atime = new Timestamp(atime);
+    }
+
+    public boolean isLocked() {
         return _isLocked;
     }
 
-    public void setLocked(int isLocked) {
+    public void setLocked(boolean isLocked) {
         this._isLocked = isLocked;
     }
 
-    public int isModified() {
+    public boolean isModified() {
         return _isModified;
     }
 
-    public void setModified(int isModified) {
+    public void setModified(boolean isModified) {
         this._isModified = isModified;
     }
 
-    public int isLocal() {
+    public boolean isLocal() {
         return _isLocal;
     }
 
-    public void setLocal(int isLocal) {
+    public void setLocal(boolean isLocal) {
         this._isLocal = isLocal;
     }
 

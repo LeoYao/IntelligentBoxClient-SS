@@ -17,6 +17,7 @@ import com.dropbox.core.DbxWebAuthNoRedirect;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.*;
 import com.dropbox.core.v2.users.FullAccount;
+import intelligentBoxClient.ss.bootstrapper.Configuration;
 import intelligentBoxClient.ss.dao.DirectoryDbContext;
 import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
 import intelligentBoxClient.ss.messages.RegistrationRequest;
@@ -213,10 +214,11 @@ public class SynchronizationService {
     }
     */
 
+    /*
     public static void testSqlite()
     {
         try {
-            DirectoryDbContext ctx = new DirectoryDbContext();
+            DirectoryDbContext ctx = new DirectoryDbContext(new Configuration());
             ctx.open("C:\\Dev_Repos\\ss\\metadata\\dir.db");
             logger.debug("Tx is beginning..");
             ctx.beginTransaction(1, 1);
@@ -232,9 +234,9 @@ public class SynchronizationService {
             entity.setSize(Long.MAX_VALUE);
             entity.setMtime(new Timestamp(new Date().getTime()));
             entity.setAtime(new Timestamp(new Date().getTime()));
-            entity.setLocked(0);
-            entity.setModified(1);
-            entity.setLocal(1);
+            entity.setLocked(true);
+            entity.setModified(false);
+            entity.setLocal(true);
             entity.setInUseCount(100);
 
             logger.debug(entity.getAtime());
@@ -250,6 +252,11 @@ public class SynchronizationService {
         {
             logger.error(e);
         }
+
+    }
+    */
+
+    public static void generateData(){
 
     }
 }

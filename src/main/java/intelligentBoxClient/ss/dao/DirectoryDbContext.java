@@ -1,8 +1,8 @@
 package intelligentBoxClient.ss.dao;
 
+import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
@@ -22,6 +22,11 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     private PreparedStatement _insertStatement;
     private PreparedStatement _updateStatement;
     private PreparedStatement _deleteStatement;
+
+    @Autowired
+    public DirectoryDbContext(IConfiguration configuration){
+        super(configuration);
+    }
 
     public DirectoryEntity querySingleFile(String fullPath) throws SQLException {
         DirectoryEntity result = null;
@@ -71,9 +76,9 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         _updateStatement.setLong(4, entity.getSize());
         _updateStatement.setLong(5, entity.getMtime().getTime() / 1000);
         _updateStatement.setLong(6, entity.getAtime().getTime() / 1000);
-        _updateStatement.setInt(7, entity.isLocked());
-        _updateStatement.setInt(8, entity.isModified());
-        _updateStatement.setInt(9, entity.isLocal());
+        _updateStatement.setInt(7, entity.isLocked() ? 1 : 0);
+        _updateStatement.setInt(8, entity.isModified() ? 1 : 0);
+        _updateStatement.setInt(9, entity.isLocal() ? 1 : 0);
         _updateStatement.setLong(10, entity.getInUseCount());
         _updateStatement.setString(11, entity.getFullPath());
 
@@ -91,9 +96,9 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         _insertStatement.setLong(5, entity.getSize());
         _insertStatement.setLong(6, getEpochTime(entity.getMtime()));
         _insertStatement.setLong(7, getEpochTime(entity.getAtime()));
-        _insertStatement.setInt(8, entity.isLocked());
-        _insertStatement.setInt(9, entity.isModified());
-        _insertStatement.setInt(10, entity.isLocal());
+        _insertStatement.setInt(8, entity.isLocked() ? 1 : 0);
+        _insertStatement.setInt(9, entity.isModified() ? 1 : 0);
+        _insertStatement.setInt(10, entity.isLocal() ? 1 : 0);
         _insertStatement.setLong(11, entity.getInUseCount());
 
         entity.setMtime(roundTimestamp(entity.getMtime()));
@@ -239,9 +244,9 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         entity.setSize(rs.getLong("size"));
         entity.setMtime(getTimestamp(rs.getLong("mtime")));
         entity.setAtime(getTimestamp(rs.getLong("atime")));
-        entity.setLocked(rs.getInt("is_locked"));
-        entity.setModified(rs.getInt("is_modified"));
-        entity.setLocal(rs.getInt("is_local"));
+        entity.setLocked(rs.getInt("is_locked") == DirectoryEntity.YES);
+        entity.setModified(rs.getInt("is_modified")  == DirectoryEntity.YES);
+        entity.setLocal(rs.getInt("is_local") == DirectoryEntity.YES);
         entity.setInUseCount(rs.getInt("in_use_count"));
         return entity;
     }
