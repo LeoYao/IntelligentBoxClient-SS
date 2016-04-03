@@ -16,6 +16,7 @@ public class DirectoryEntity {
     private String _fullPath;
     private String _parentFolderFullPath;
     private String _entryName;
+    private String _oldFullPath;
     private int _type;
     private long _size;
     private Timestamp _mtime;
@@ -23,6 +24,7 @@ public class DirectoryEntity {
     private boolean _isLocked;
     private boolean _isModified;
     private boolean _isLocal;
+    private boolean _isDeleted;
     private long _inUseCount;
 
 
@@ -32,6 +34,14 @@ public class DirectoryEntity {
 
     public void setFullPath(String fullPath) {
         this._fullPath = fullPath;
+    }
+
+    public String getOldFullPath() {
+        return _oldFullPath == null ? "" : _oldFullPath;
+    }
+
+    public void setOldFullPath(String oldFullPath) {
+        this._oldFullPath = oldFullPath;
     }
 
     public String getParentFolderFullPath() {
@@ -111,6 +121,14 @@ public class DirectoryEntity {
 
     public void setLocal(boolean isLocal) {
         this._isLocal = isLocal;
+    }
+
+    public boolean isDeleted() {
+        return _isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this._isDeleted = isDeleted;
     }
 
     public long getInUseCount() {

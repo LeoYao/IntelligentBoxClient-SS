@@ -72,15 +72,17 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
 
         _updateStatement.setString(1, entity.getParentFolderFullPath());
         _updateStatement.setString(2, entity.getEntryName());
-        _updateStatement.setInt(3, entity.getType());
-        _updateStatement.setLong(4, entity.getSize());
-        _updateStatement.setLong(5, entity.getMtime().getTime() / 1000);
-        _updateStatement.setLong(6, entity.getAtime().getTime() / 1000);
-        _updateStatement.setInt(7, entity.isLocked() ? 1 : 0);
-        _updateStatement.setInt(8, entity.isModified() ? 1 : 0);
-        _updateStatement.setInt(9, entity.isLocal() ? 1 : 0);
-        _updateStatement.setLong(10, entity.getInUseCount());
-        _updateStatement.setString(11, entity.getFullPath());
+        _updateStatement.setString(3, entity.getOldFullPath());
+        _updateStatement.setInt(4, entity.getType());
+        _updateStatement.setLong(5, entity.getSize());
+        _updateStatement.setLong(6, getEpochTime(entity.getMtime()));
+        _updateStatement.setLong(7, getEpochTime(entity.getAtime()));
+        _updateStatement.setInt(8, entity.isLocked() ? DirectoryEntity.YES : DirectoryEntity.NO);
+        _updateStatement.setInt(9, entity.isModified() ? DirectoryEntity.YES : DirectoryEntity.NO);
+        _updateStatement.setInt(10, entity.isLocal() ? DirectoryEntity.YES : DirectoryEntity.NO);
+        _updateStatement.setInt(11, entity.isDeleted() ? DirectoryEntity.YES : DirectoryEntity.NO);
+        _updateStatement.setLong(12, entity.getInUseCount());
+        _updateStatement.setString(13, entity.getFullPath());
 
         affectedRowCnt = _updateStatement.executeUpdate();
         return affectedRowCnt;
@@ -92,14 +94,16 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         _insertStatement.setString(1, entity.getFullPath());
         _insertStatement.setString(2, entity.getParentFolderFullPath());
         _insertStatement.setString(3, entity.getEntryName());
-        _insertStatement.setInt(4, entity.getType());
-        _insertStatement.setLong(5, entity.getSize());
-        _insertStatement.setLong(6, getEpochTime(entity.getMtime()));
-        _insertStatement.setLong(7, getEpochTime(entity.getAtime()));
-        _insertStatement.setInt(8, entity.isLocked() ? 1 : 0);
-        _insertStatement.setInt(9, entity.isModified() ? 1 : 0);
-        _insertStatement.setInt(10, entity.isLocal() ? 1 : 0);
-        _insertStatement.setLong(11, entity.getInUseCount());
+        _insertStatement.setString(4, entity.getOldFullPath());
+        _insertStatement.setInt(5, entity.getType());
+        _insertStatement.setLong(6, entity.getSize());
+        _insertStatement.setLong(7, getEpochTime(entity.getMtime()));
+        _insertStatement.setLong(8, getEpochTime(entity.getAtime()));
+        _insertStatement.setInt(9, entity.isLocked() ? DirectoryEntity.YES : DirectoryEntity.NO);
+        _insertStatement.setInt(10, entity.isModified() ? DirectoryEntity.YES : DirectoryEntity.NO);
+        _insertStatement.setInt(11, entity.isLocal() ? DirectoryEntity.YES : DirectoryEntity.NO);
+        _insertStatement.setInt(12, entity.isDeleted() ? DirectoryEntity.YES : DirectoryEntity.NO);
+        _insertStatement.setLong(13, entity.getInUseCount());
 
         entity.setMtime(roundTimestamp(entity.getMtime()));
         entity.setAtime(roundTimestamp(entity.getAtime()));
@@ -125,6 +129,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                     _connection.prepareStatement("SELECT   full_path\n" +
                             "       , parent_folder_full_path\n" +
                             "       , entry_name\n" +
+                            "       , old_full_path\n" +
                             "       , type\n" +
                             "       , size\n" +
                             "       , mtime\n" +
@@ -132,6 +137,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             "       , is_locked\n" +
                             "       , is_modified\n" +
                             "       , is_local\n" +
+                            "       , is_deleted\n" +
                             "       , in_use_count\n" +
                             "  FROM directory\n" +
                             " WHERE full_path = ?;");
@@ -140,6 +146,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                     _connection.prepareStatement("SELECT   full_path\n" +
                             "       , parent_folder_full_path\n" +
                             "       , entry_name\n" +
+                            "       , old_full_path\n" +
                             "       , type\n" +
                             "       , size\n" +
                             "       , mtime\n" +
@@ -147,6 +154,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             "       , is_locked\n" +
                             "       , is_modified\n" +
                             "       , is_local\n" +
+                            "       , is_deleted\n" +
                             "       , in_use_count\n" +
                             "  FROM directory\n" +
                             " WHERE parent_folder_full_path = ?;");
@@ -156,6 +164,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             "( full_path\n" +
                             ", parent_folder_full_path\n" +
                             ", entry_name\n" +
+                            ", old_full_path\n" +
                             ", type\n" +
                             ", size\n" +
                             ", mtime\n" +
@@ -163,13 +172,15 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             ", is_locked\n" +
                             ", is_modified\n" +
                             ", is_local\n" +
+                            ", is_deleted\n" +
                             ", in_use_count)\n" +
-                            "VALUES (?,?,?,?,?,?,?,?,?,?,?);");
+                            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);");
 
             _updateStatement = _connection.prepareStatement
                     ("UPDATE directory\n" +
                             "SET parent_folder_full_path = ?\n" +
                             ", entry_name = ?\n" +
+                            ", old_full_path = ?\n" +
                             ", type = ?\n" +
                             ", size = ?\n" +
                             ", mtime = ?\n" +
@@ -177,6 +188,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             ", is_locked = ?\n" +
                             ", is_modified = ?\n" +
                             ", is_local = ?\n" +
+                            ", is_deleted = ?\n" +
                             ", in_use_count = ?\n" +
                             "WHERE full_path = ?;");
 
@@ -240,6 +252,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         entity.setFullPath(rs.getString("full_path"));
         entity.setParentFolderFullPath(rs.getString("parent_folder_full_path"));
         entity.setEntryName(rs.getString("entry_name"));
+        entity.setOldFullPath(rs.getString("old_full_path"));
         entity.setType(rs.getInt("type"));
         entity.setSize(rs.getLong("size"));
         entity.setMtime(getTimestamp(rs.getLong("mtime")));
@@ -247,6 +260,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         entity.setLocked(rs.getInt("is_locked") == DirectoryEntity.YES);
         entity.setModified(rs.getInt("is_modified")  == DirectoryEntity.YES);
         entity.setLocal(rs.getInt("is_local") == DirectoryEntity.YES);
+        entity.setDeleted(rs.getInt("is_deleted") == DirectoryEntity.YES);
         entity.setInUseCount(rs.getInt("in_use_count"));
         return entity;
     }
@@ -257,6 +271,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                 "(full_path varchar(4000) PRIMARY KEY,\n" +
                 " parent_folder_full_path varchar(4000), \n" +
                 " entry_name varchar(255),\n" +
+                " old_full_path varchar(4000),\n" +
                 " type integer,\n" +
                 " size integer,\n" +
                 " mtime datetime,\n" +
@@ -264,6 +279,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                 " is_locked integer,\n" +
                 " is_modified integer,\n" +
                 " is_local integer,\n" +
+                " is_deleted integer,\n" +
                 " in_use_count integer);";
 
         executeSql(sql);

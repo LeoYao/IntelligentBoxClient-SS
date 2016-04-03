@@ -3,7 +3,9 @@ package intelligentBoxClient.ss.dropbox.utils;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.UploadBuilder;
 import com.dropbox.core.v2.files.UploadUploader;
+import com.dropbox.core.v2.files.WriteMode;
 import com.sun.corba.se.spi.orbutil.fsm.Input;
 import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 
@@ -31,12 +33,14 @@ public class Upload extends RetryClientOperation<FileMetadata> {
     @Override
     protected FileMetadata run() throws DbxException {
         FileMetadata result = null;
+        UploadBuilder uploaderBuilder = null;
         UploadUploader uploader = null;
         InputStream in = null;
         try {
-            uploader = _client.files().upload(_remotePath);
+            uploaderBuilder = _client.files().uploadBuilder(_remotePath).withMode(WriteMode.OVERWRITE);
             Path localInput = Paths.get(_localPath);
             in = new BufferedInputStream(Files.newInputStream(localInput));
+            uploader = uploaderBuilder.start();
             result = uploader.uploadAndFinish(in);
         } catch (IOException e) {
             logger.error(e);

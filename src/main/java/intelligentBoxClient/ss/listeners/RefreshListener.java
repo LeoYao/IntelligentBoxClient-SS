@@ -3,6 +3,7 @@ package intelligentBoxClient.ss.listeners;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
 import intelligentBoxClient.ss.bootstrapper.Bootstrapper;
+import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dropbox.IDropboxClient;
 import intelligentBoxClient.ss.persistence.IDirectoryDbSaver;
 import org.apache.commons.logging.Log;
@@ -33,7 +34,7 @@ public class RefreshListener implements ApplicationListener<ContextRefreshedEven
             SpringApplication.exit(appCtx, new AbortExitCodeGenerator());
         }
 
-        //genData(appCtx);
+        genData(appCtx);
     }
 
     class AbortExitCodeGenerator implements ExitCodeGenerator
@@ -48,10 +49,12 @@ public class RefreshListener implements ApplicationListener<ContextRefreshedEven
         IDropboxClient dbxClient = appCtx.getBean(IDropboxClient.class);
         IDirectoryDbSaver dirDbSaver = appCtx.getBean(IDirectoryDbSaver.class);
 
-        for (int i = 0; i < 10; ++i) {
+        IConfiguration configuration = appCtx.getBean(IConfiguration.class);
+
+        for (int i = 0; i < 3; ++i) {
             try {
-                String remotePath = "/testData/test" + i + ".txt";
-                FileMetadata metadata = dbxClient.uploadFile(remotePath, "C:\\Dev_Repos\\ss\\data\\testData\\test" + i + ".txt");
+                String remotePath = "/testdata/test" + i + ".txt";
+                FileMetadata metadata = dbxClient.uploadFile(remotePath, configuration.getDataFolderPath() + "testdata/test" + i + ".txt");
                 dirDbSaver.save(metadata);
             } catch (DbxException e) {
                 logger.error(e);

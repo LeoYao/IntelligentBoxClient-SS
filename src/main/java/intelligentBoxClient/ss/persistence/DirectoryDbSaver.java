@@ -31,26 +31,32 @@ public class DirectoryDbSaver implements IDirectoryDbSaver {
     public boolean save(FileMetadata metadata) {
         boolean inTransaction = false;
         try {
+            String fullPath = metadata.getPathLower();
+            String name = metadata.getName().toLowerCase();
+            String parentPath = extractParentFolderPath(fullPath, name);
             inTransaction = _directoryDbContext.beginTransaction();
-            DirectoryEntity entity = _directoryDbContext.querySingleFile(metadata.getPathDisplay());
+            DirectoryEntity entity = _directoryDbContext.querySingleFile(fullPath);
             if (entity == null) {
                 entity = new DirectoryEntity();
-                entity.setFullPath(metadata.getPathDisplay());
-                entity.setEntryName(metadata.getName());
-                entity.setParentFolderFullPath(extractParentFolderPath(metadata.getPathDisplay(), metadata.getName()));
+                entity.setFullPath(fullPath);
+                entity.setEntryName(name);
+                entity.setOldFullPath("");
+                entity.setParentFolderFullPath(parentPath);
                 entity.setType(DirectoryEntity.FILE);
                 entity.setSize(metadata.getSize());
                 entity.setMtime(metadata.getServerModified().getTime());
                 entity.setAtime(metadata.getServerModified().getTime());
                 entity.setLocked(false);
-                entity.setLocal(false);
+                entity.setLocal(true);
+                entity.setModified(false);
+                entity.setDeleted(false);
                 entity.setInUseCount(0);
 
                 _directoryDbContext.insertFile(entity);
             } else {
-                entity.setFullPath(metadata.getPathDisplay());
-                entity.setEntryName(metadata.getName());
-                entity.setParentFolderFullPath(extractParentFolderPath(metadata.getPathDisplay(), metadata.getName()));
+                entity.setFullPath(fullPath);
+                entity.setEntryName(name);
+                entity.setParentFolderFullPath(parentPath);
                 entity.setType(DirectoryEntity.FILE);
                 entity.setSize(metadata.getSize());
                 entity.setMtime(metadata.getServerModified().getTime());
