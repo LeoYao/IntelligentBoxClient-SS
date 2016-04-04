@@ -7,11 +7,13 @@ public class RemoteChangeEntity {
     private String _fullPath;
     private String _entryName;
     private boolean _isDeleted;
+    private String _revision;
 
-    public RemoteChangeEntity(String fullPath, String name, boolean isDeleted){
+    public RemoteChangeEntity(String fullPath, String name, boolean isDeleted, String revision){
         _fullPath = fullPath;
         _isDeleted = isDeleted;
         _entryName = name;
+        _revision = revision;
     }
 
     public String getFullPath(){ return _fullPath; }
@@ -22,5 +24,8 @@ public class RemoteChangeEntity {
 
     public boolean isDeleted(){ return _isDeleted;}
     public void setDeleted(boolean isDeleted) { _isDeleted = isDeleted;}
+
+    public String getRevision(){ return _revision == null ? "" : _revision; }
+    public void setRevision(String revision) { _revision = revision; }
 
 }

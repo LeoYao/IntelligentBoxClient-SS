@@ -51,6 +51,7 @@ public class DirectoryDbSaver implements IDirectoryDbSaver {
                 entity.setModified(false);
                 entity.setDeleted(false);
                 entity.setInUseCount(0);
+                entity.setRevision(metadata.getRev());
 
                 _directoryDbContext.insertFile(entity);
             } else {
@@ -61,6 +62,7 @@ public class DirectoryDbSaver implements IDirectoryDbSaver {
                 entity.setSize(metadata.getSize());
                 entity.setMtime(metadata.getServerModified().getTime());
                 entity.setAtime(metadata.getServerModified().getTime());
+                entity.setRevision(metadata.getRev());
 
                 _directoryDbContext.updateFile(entity);
             }

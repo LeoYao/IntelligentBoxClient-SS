@@ -131,6 +131,7 @@ public class LocalFileSynchronizer implements IFileSynchronizer{
 
             latestEntity.setSize(metadata.getSize());
             latestEntity.setModified(false);
+            latestEntity.setRevision(metadata.getRev());
 
             _directoryDbContext.updateFile(latestEntity);
 

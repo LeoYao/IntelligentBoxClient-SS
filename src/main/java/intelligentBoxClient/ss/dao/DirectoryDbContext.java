@@ -101,7 +101,8 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         _updateStatement.setInt(10, entity.isLocal() ? DirectoryEntity.YES : DirectoryEntity.NO);
         _updateStatement.setInt(11, entity.isDeleted() ? DirectoryEntity.YES : DirectoryEntity.NO);
         _updateStatement.setLong(12, entity.getInUseCount());
-        _updateStatement.setString(13, entity.getFullPath());
+        _updateStatement.setString(13, entity.getRevision());
+        _updateStatement.setString(14, entity.getFullPath());
 
         affectedRowCnt = _updateStatement.executeUpdate();
         return affectedRowCnt;
@@ -123,6 +124,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         _insertStatement.setInt(11, entity.isLocal() ? DirectoryEntity.YES : DirectoryEntity.NO);
         _insertStatement.setInt(12, entity.isDeleted() ? DirectoryEntity.YES : DirectoryEntity.NO);
         _insertStatement.setLong(13, entity.getInUseCount());
+        _insertStatement.setString(14, entity.getRevision());
 
         entity.setMtime(roundTimestamp(entity.getMtime()));
         entity.setAtime(roundTimestamp(entity.getAtime()));
@@ -158,6 +160,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             "       , is_local\n" +
                             "       , is_deleted\n" +
                             "       , in_use_count\n" +
+                            "       , revision\n" +
                             "  FROM directory\n" +
                             " WHERE full_path = ?;");
 
@@ -175,6 +178,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             "       , is_local\n" +
                             "       , is_deleted\n" +
                             "       , in_use_count\n" +
+                            "       , revision\n" +
                             "  FROM directory\n" +
                             " WHERE parent_folder_full_path = ? \n" +
                             "  ORDER BY full_path ASC;");
@@ -193,6 +197,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             "       , is_local\n" +
                             "       , is_deleted\n" +
                             "       , in_use_count\n" +
+                            "       , revision\n" +
                             "  FROM directory\n" +
                             " WHERE is_modified = 1\n" +
                             " ORDER BY full_path DESC;");
@@ -211,8 +216,9 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             ", is_modified\n" +
                             ", is_local\n" +
                             ", is_deleted\n" +
-                            ", in_use_count)\n" +
-                            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);");
+                            ", in_use_count\n" +
+                            ", revision)\n" +
+                            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 
             _updateStatement = _connection.prepareStatement
                     ("UPDATE directory\n" +
@@ -228,6 +234,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             ", is_local = ?\n" +
                             ", is_deleted = ?\n" +
                             ", in_use_count = ?\n" +
+                            ", revision = ?\n" +
                             "WHERE full_path = ?;");
 
             _deleteStatement = _connection.prepareStatement("DELETE FROM directory WHERE full_path = ?;");
@@ -303,6 +310,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         entity.setLocal(rs.getInt("is_local") == DirectoryEntity.YES);
         entity.setDeleted(rs.getInt("is_deleted") == DirectoryEntity.YES);
         entity.setInUseCount(rs.getInt("in_use_count"));
+        entity.setRevision(rs.getString("revision"));
         return entity;
     }
 
@@ -321,7 +329,8 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                 " is_modified integer,\n" +
                 " is_local integer,\n" +
                 " is_deleted integer,\n" +
-                " in_use_count integer);";
+                " in_use_count integer,\n" +
+                " revision varchar(100));";
 
         executeSql(sql);
 

@@ -81,7 +81,8 @@ public class RemoteFileSynchronizer implements IFileSynchronizer {
         try {
             DirectoryEntity directoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
 
-            if (directoryEntity == null || directoryEntity.isModified() || !directoryEntity.isLocal()) {
+            if (directoryEntity == null || directoryEntity.isModified() || !directoryEntity.isLocal()
+                || directoryEntity.getRevision().equals(remoteChange.getRevision())) {
                 //No need to download if the file is not local or the local file has been modified
                 _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
                 logger.debug("Skipped synchronizing " + remoteChange.getFullPath() + " from dropbox.");
@@ -122,9 +123,10 @@ public class RemoteFileSynchronizer implements IFileSynchronizer {
                 String name = metadata.getName().toLowerCase();
                 RemoteChangeEntity remoteChangeEntity = null;
                 if (metadata instanceof DeletedMetadata) {
-                    remoteChangeEntity = new RemoteChangeEntity(fullPath, name, true);
+                    remoteChangeEntity = new RemoteChangeEntity(fullPath, name, true, "");
                 } else if (metadata instanceof FileMetadata){ //ignore folders
-                    remoteChangeEntity = new RemoteChangeEntity(fullPath, name, false);
+                    FileMetadata fileMetadata = (FileMetadata)metadata;
+                    remoteChangeEntity = new RemoteChangeEntity(fullPath, name, false, fileMetadata.getRev());
                 } else {
                     continue;//ignore folders
                 }
@@ -151,6 +153,7 @@ public class RemoteFileSynchronizer implements IFileSynchronizer {
         String tmpPath = _configuration.getTmpFolderPath() + remoteChange.getEntryName();
         String localPath = _configuration.getDataFolderPath() + remoteChange.getFullPath();
         FileMetadata metadata = null;
+
         try {
             metadata = _dropboxClient.downloadFile(remoteChange.getFullPath(), tmpPath);
         } catch (DbxException e) {

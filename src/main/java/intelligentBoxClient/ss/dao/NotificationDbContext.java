@@ -77,7 +77,8 @@ public class NotificationDbContext extends SqliteContext implements INotificatio
                 RemoteChangeEntity entity
                         = new RemoteChangeEntity(rs.getString("full_path"),
                                                 rs.getString("entry_name"),
-                                                rs.getInt("is_deleted") == 1);
+                                                rs.getInt("is_deleted") == 1,
+                                                rs.getString("revision"));
                 results.add(entity);
             }
         }
@@ -102,7 +103,8 @@ public class NotificationDbContext extends SqliteContext implements INotificatio
                 RemoteChangeEntity entity
                         = new RemoteChangeEntity(rs.getString("full_path"),
                                                 rs.getString("entry_name"),
-                                                rs.getInt("is_deleted") == 1);
+                                                rs.getInt("is_deleted") == 1,
+                                                rs.getString("revision"));
                 return entity;
             }
             else {
@@ -121,6 +123,7 @@ public class NotificationDbContext extends SqliteContext implements INotificatio
         _insertPendingDownload.setString(1, entity.getFullPath());
         _insertPendingDownload.setString(2, entity.getEntryName());
         _insertPendingDownload.setInt(3, entity.isDeleted() ? 1 : 0);
+        _insertPendingDownload.setString(4, entity.getRevision());
         affectedRowCount = _insertPendingDownload.executeUpdate();
         return affectedRowCount;
     }
@@ -136,7 +139,8 @@ public class NotificationDbContext extends SqliteContext implements INotificatio
         int affectedRowCount = 0;
         _updatePendingDownload.setInt(1, entity.isDeleted() ? 1 : 0);
         _updatePendingDownload.setString(2, entity.getEntryName());
-        _updatePendingDownload.setString(3, entity.getFullPath());
+        _updatePendingDownload.setString(3, entity.getRevision());
+        _updatePendingDownload.setString(4, entity.getFullPath());
         affectedRowCount = _updatePendingDownload.executeUpdate();
         return affectedRowCount;
     }
@@ -148,15 +152,15 @@ public class NotificationDbContext extends SqliteContext implements INotificatio
             _resetRemoteChanged = _connection.prepareStatement("UPDATE REMOTE_CHANGED SET is_changed = 0;");
             _setRemoteChanged = _connection.prepareStatement("UPDATE REMOTE_CHANGED SET is_changed = 1;");
             _queryAllPendingDownloads
-                    = _connection.prepareStatement("SELECT full_path, entry_name, is_deleted FROM PENDING_REMOTE_CHANGES;");
+                    = _connection.prepareStatement("SELECT full_path, entry_name, is_deleted, revision FROM PENDING_REMOTE_CHANGES;");
             _queryPendingDownload
-                    = _connection.prepareStatement("SELECT full_path, entry_name, is_deleted FROM PENDING_REMOTE_CHANGES WHERE full_path = ?;");
+                    = _connection.prepareStatement("SELECT full_path, entry_name, is_deleted, revision FROM PENDING_REMOTE_CHANGES WHERE full_path = ?;");
             _insertPendingDownload
-                    = _connection.prepareStatement("INSERT INTO PENDING_REMOTE_CHANGES (full_path, entry_name, is_deleted) VALUES (?, ?, ?);");
+                    = _connection.prepareStatement("INSERT INTO PENDING_REMOTE_CHANGES (full_path, entry_name, is_deleted, revision) VALUES (?, ?, ?, ?);");
             _deletePendingDownload
                     = _connection.prepareStatement("DELETE FROM PENDING_REMOTE_CHANGES WHERE full_path = ?;");
             _updatePendingDownload
-                    = _connection.prepareStatement("UPDATE PENDING_REMOTE_CHANGES SET is_deleted = ?, entry_name = ? WHERE full_path = ?;");
+                    = _connection.prepareStatement("UPDATE PENDING_REMOTE_CHANGES SET is_deleted = ?, entry_name = ?, revision = ? WHERE full_path = ?;");
         }
         catch (SQLException e) {
             logger.error("Failed to prepare statements.", e);
@@ -244,7 +248,8 @@ public class NotificationDbContext extends SqliteContext implements INotificatio
         String sql = "create table if not exists PENDING_REMOTE_CHANGES \n" +
                 "(full_path varchar(4000) PRIMARY KEY,\n" +
                 "entry_name varchar(255),\n" +
-                " is_deleted integer);";
+                "is_deleted integer,\n" +
+                "revision varchar(100));";
 
         executeSql(sql);
     }

@@ -26,7 +26,7 @@ public class DirectoryEntity {
     private boolean _isLocal;
     private boolean _isDeleted;
     private long _inUseCount;
-
+    private String _revision;
 
     public String getFullPath() {
         return _fullPath;
@@ -138,4 +138,7 @@ public class DirectoryEntity {
     public void setInUseCount(long inUseCount) {
         this._inUseCount = inUseCount;
     }
+
+    public String getRevision(){ return _revision == null ? "" : _revision; }
+    public void setRevision(String revision) { _revision = revision; }
 }
