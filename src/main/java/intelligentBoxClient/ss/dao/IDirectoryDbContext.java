@@ -11,6 +11,7 @@ import java.util.List;
 public interface IDirectoryDbContext extends ISqliteContext {
     DirectoryEntity querySingleFile(String fullPath) throws SQLException;
     List<DirectoryEntity> queryFiles(String parentFolderFullPath) throws SQLException;
+    List<DirectoryEntity> queryChanges() throws SQLException;
     int updateFile(DirectoryEntity entry) throws SQLException;
     int insertFile(DirectoryEntity entry) throws SQLException;
     int deleteFile(String fullPath) throws SQLException;

@@ -1,33 +1,13 @@
 package intelligentBoxClient.ss.workers;
 
-import com.dropbox.core.DbxException;
-import com.dropbox.core.v2.files.DeletedMetadata;
-import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.Metadata;
-import intelligentBoxClient.ss.bootstrapper.IConfiguration;
-import intelligentBoxClient.ss.dao.IDirectoryDbContext;
-import intelligentBoxClient.ss.dao.INotificationDbContext;
-import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
-import intelligentBoxClient.ss.dao.pojo.RemoteChangeEntity;
 import intelligentBoxClient.ss.dropbox.IDropboxClient;
-import intelligentBoxClient.ss.persistence.IDirectoryDbSaver;
-import intelligentBoxClient.ss.workers.synchronizers.IRemoteFileSynchronizer;
+import intelligentBoxClient.ss.workers.synchronizers.IFileSynchronizer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.nio.file.StandardCopyOption.*;
 
 /**
  * Created by Leo on 3/27/16.
@@ -37,26 +17,19 @@ public class SynchronizationWorker implements Runnable, ISynchronizationWorker {
 
     private Thread thread;
     private Log logger = LogFactory.getLog(this.getClass());
-    private IDirectoryDbContext _directoryDbContext;
-    private INotificationDbContext _notificationDbContext;
     private IDropboxClient _dropboxClient;
-    private IConfiguration _configuration;
-    private IDirectoryDbSaver _directoryDbSaver;
-    private IRemoteFileSynchronizer _remoteFileSynchronizer;
+    private IFileSynchronizer _remoteFileSynchronizer;
+    private IFileSynchronizer _localFileSynchronizer;
+
 
     @Autowired
-    public SynchronizationWorker(IDirectoryDbContext directoryDbContext,
-                                 INotificationDbContext notificationDbContext,
-                                 IDropboxClient dropboxClient,
-                                 IDirectoryDbSaver directoryDbSaver,
-                                 IConfiguration configuration,
-                                 IRemoteFileSynchronizer remoteFileSynchronizer){
-        _directoryDbContext = directoryDbContext;
-        _notificationDbContext = notificationDbContext;
+    public SynchronizationWorker(IDropboxClient dropboxClient,
+                                 @Qualifier("RemoteFileSynchronizer") IFileSynchronizer remoteFileSynchronizer,
+                                 @Qualifier("LocalFileSynchronizer") IFileSynchronizer localFileSynchronizer){
         _dropboxClient = dropboxClient;
-        _configuration = configuration;
-        _directoryDbSaver = directoryDbSaver;
+
         _remoteFileSynchronizer = remoteFileSynchronizer;
+        _localFileSynchronizer = localFileSynchronizer;
     }
 
     @Override
@@ -64,10 +37,10 @@ public class SynchronizationWorker implements Runnable, ISynchronizationWorker {
 
         try {
             while (true) {
-                synchronizeRemoteChanges();
-
+                _remoteFileSynchronizer.synchronize();
+                _localFileSynchronizer.synchronize();
                 _dropboxClient.save();
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             }
         } catch (InterruptedException e) {
             logger.debug(e);
@@ -95,60 +68,6 @@ public class SynchronizationWorker implements Runnable, ISynchronizationWorker {
         }
 
         return true;
-    }
-
-    private List<RemoteChangeEntity> getRemoteChanges() throws SQLException {
-        List<RemoteChangeEntity> existingRemoteChanges = _notificationDbContext.queryAllPendingRemoteChanges();
-        Map<String, RemoteChangeEntity> existingRemoteChangeMap = new HashMap<>();
-        for (RemoteChangeEntity entity : existingRemoteChanges) {
-            existingRemoteChangeMap.put(entity.getFullPath(), entity);
-        }
-
-        if (_notificationDbContext.isRemoteChanged()) {
-            List<Metadata> changedMetadata = null;
-            try {
-                changedMetadata = _dropboxClient.getChanges();
-            } catch (DbxException e) {
-                logger.error(e);
-                return existingRemoteChanges;
-            }
-
-            for (Metadata metadata : changedMetadata) {
-                String fullPath = metadata.getPathLower();
-                String name = metadata.getName().toLowerCase();
-                RemoteChangeEntity remoteChangeEntity = null;
-                if (metadata instanceof DeletedMetadata) {
-                    remoteChangeEntity = new RemoteChangeEntity(fullPath, name, true);
-                } else if (metadata instanceof FileMetadata){ //ignore folders
-                    remoteChangeEntity = new RemoteChangeEntity(fullPath, name, false);
-                } else {
-                    continue;//ignore folders
-                }
-                if (existingRemoteChangeMap.containsKey(fullPath)) {
-                    if (existingRemoteChangeMap.get(fullPath).isDeleted() != remoteChangeEntity.isDeleted()) {
-                        _notificationDbContext.updatePendingRemoteChanges(remoteChangeEntity);
-                    }
-                } else {
-                    _notificationDbContext.insertPendingRemoteChanges(remoteChangeEntity);
-                }
-                existingRemoteChangeMap.put(fullPath, remoteChangeEntity);
-            }
-        }
-
-        existingRemoteChanges = new ArrayList<>(existingRemoteChangeMap.values());
-        return existingRemoteChanges;
-    }
-
-    private void synchronizeRemoteChanges() {
-        try {
-            List<RemoteChangeEntity> remoteChanges = getRemoteChanges();
-
-            for (RemoteChangeEntity remoteChange : remoteChanges) {
-                _remoteFileSynchronizer.synchronize(remoteChange);
-            }
-        } catch (SQLException ex) {
-            logger.warn(ex);
-        }
     }
 
 }

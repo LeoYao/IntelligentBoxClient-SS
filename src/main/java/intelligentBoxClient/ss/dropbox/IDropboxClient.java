@@ -19,4 +19,5 @@ public interface IDropboxClient {
     List<Metadata> getChanges()  throws DbxException;
     FileMetadata downloadFile(String remotePath, String localPath) throws DbxException;
     FileMetadata uploadFile(String remotePath, String localPath) throws DbxException;
+    Metadata deleteFile(String remotePath) throws DbxException;
 }

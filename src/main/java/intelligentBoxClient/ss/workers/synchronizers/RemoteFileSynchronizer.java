@@ -1,7 +1,9 @@
 package intelligentBoxClient.ss.workers.synchronizers;
 
 import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.files.DeletedMetadata;
 import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.Metadata;
 import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dao.IDirectoryDbContext;
 import intelligentBoxClient.ss.dao.INotificationDbContext;
@@ -19,14 +21,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Created by Leo on 4/3/16.
  */
-@Service
-public class RemoteFileSynchronizer implements IRemoteFileSynchronizer {
+@Service(value="RemoteFileSynchronizer")
+public class RemoteFileSynchronizer implements IFileSynchronizer {
 
     private IDirectoryDbContext _directoryDbContext;
     private INotificationDbContext _notificationDbContext;
@@ -34,6 +40,7 @@ public class RemoteFileSynchronizer implements IRemoteFileSynchronizer {
     private IDirectoryDbSaver _directoryDbSaver;
     private IDropboxClient _dropboxClient;
     private Log logger;
+
     @Autowired
     public RemoteFileSynchronizer(IDirectoryDbContext directoryDbContext,
                                   INotificationDbContext notificationDbContext,
@@ -47,17 +54,30 @@ public class RemoteFileSynchronizer implements IRemoteFileSynchronizer {
         _directoryDbSaver = directoryDbSaver;
         _dropboxClient = dropboxClient;
     }
-    /*
- *  Download remote changed files when
- *  (1) the file has existed in local storage
- *  (2) the local file is not modified
- *
- *  If the local file is locked but not yet modified,
- *  skip the file for this time and retry it next time.
- */
-    @Override
-    public void synchronize(RemoteChangeEntity remoteChange){
 
+    /*
+     *  Download/Deleted according to remote changed files when
+     *    (1) the file has existed in local storage
+     *    (2) the local file is not modified
+     *
+     *  If the local file is locked but not yet modified,
+     *  skip the file for this time and retry it next time.
+     */
+    @Override
+    public void synchronize(){
+
+        try {
+            List<RemoteChangeEntity> remoteChanges = getRemoteChanges();
+
+            for (RemoteChangeEntity remoteChange : remoteChanges) {
+                synchronizeChange(remoteChange);
+            }
+        } catch (SQLException ex) {
+            logger.warn(ex);
+        }
+    }
+
+    private void synchronizeChange(RemoteChangeEntity remoteChange){
         try {
             DirectoryEntity directoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
 
@@ -79,9 +99,50 @@ public class RemoteFileSynchronizer implements IRemoteFileSynchronizer {
             logger.warn("Failed to synchronize [" + remoteChange.getFullPath() + "] from dropbox", e);
             return;
         }
-
-
     }
+
+    private List<RemoteChangeEntity> getRemoteChanges() throws SQLException {
+        List<RemoteChangeEntity> existingRemoteChanges = _notificationDbContext.queryAllPendingRemoteChanges();
+        Map<String, RemoteChangeEntity> existingRemoteChangeMap = new HashMap<>();
+        for (RemoteChangeEntity entity : existingRemoteChanges) {
+            existingRemoteChangeMap.put(entity.getFullPath(), entity);
+        }
+
+        if (_notificationDbContext.isRemoteChanged()) {
+            List<Metadata> changedMetadata = null;
+            try {
+                changedMetadata = _dropboxClient.getChanges();
+            } catch (DbxException e) {
+                logger.error(e);
+                return existingRemoteChanges;
+            }
+
+            for (Metadata metadata : changedMetadata) {
+                String fullPath = metadata.getPathLower();
+                String name = metadata.getName().toLowerCase();
+                RemoteChangeEntity remoteChangeEntity = null;
+                if (metadata instanceof DeletedMetadata) {
+                    remoteChangeEntity = new RemoteChangeEntity(fullPath, name, true);
+                } else if (metadata instanceof FileMetadata){ //ignore folders
+                    remoteChangeEntity = new RemoteChangeEntity(fullPath, name, false);
+                } else {
+                    continue;//ignore folders
+                }
+                if (existingRemoteChangeMap.containsKey(fullPath)) {
+                    if (existingRemoteChangeMap.get(fullPath).isDeleted() != remoteChangeEntity.isDeleted()) {
+                        _notificationDbContext.updatePendingRemoteChanges(remoteChangeEntity);
+                    }
+                } else {
+                    _notificationDbContext.insertPendingRemoteChanges(remoteChangeEntity);
+                }
+                existingRemoteChangeMap.put(fullPath, remoteChangeEntity);
+            }
+        }
+
+        existingRemoteChanges = new ArrayList<>(existingRemoteChangeMap.values());
+        return existingRemoteChanges;
+    }
+
 
     private void downloadFile(RemoteChangeEntity remoteChange){
 

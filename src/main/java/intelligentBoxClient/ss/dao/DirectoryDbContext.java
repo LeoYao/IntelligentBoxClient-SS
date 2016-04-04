@@ -21,6 +21,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     private PreparedStatement _traverseDirectoryStatement;
     private PreparedStatement _insertStatement;
     private PreparedStatement _updateStatement;
+    private PreparedStatement _queryChangesStatement;
     private PreparedStatement _deleteStatement;
 
     @Autowired
@@ -55,6 +56,24 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         try {
             _queryFileStatement.setString(1, parentFolderFullPath);
             rs = _traverseDirectoryStatement.executeQuery();
+            while (rs.next()) {
+                results.add(populateDirectoryEntity(rs));
+            }
+        } finally {
+            if (rs != null && !rs.isClosed()) {
+                rs.close();
+            }
+        }
+
+        return results;
+    }
+
+    public List<DirectoryEntity> queryChanges() throws SQLException {
+        List<DirectoryEntity> results = new LinkedList<DirectoryEntity>();
+        ResultSet rs = null;
+
+        try {
+            rs = _queryChangesStatement.executeQuery();
             while (rs.next()) {
                 results.add(populateDirectoryEntity(rs));
             }
@@ -157,7 +176,26 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             "       , is_deleted\n" +
                             "       , in_use_count\n" +
                             "  FROM directory\n" +
-                            " WHERE parent_folder_full_path = ?;");
+                            " WHERE parent_folder_full_path = ? \n" +
+                            "  ORDER BY full_path ASC;");
+
+            _queryChangesStatement =
+                    _connection.prepareStatement("SELECT   full_path\n" +
+                            "       , parent_folder_full_path\n" +
+                            "       , entry_name\n" +
+                            "       , old_full_path\n" +
+                            "       , type\n" +
+                            "       , size\n" +
+                            "       , mtime\n" +
+                            "       , atime\n" +
+                            "       , is_locked\n" +
+                            "       , is_modified\n" +
+                            "       , is_local\n" +
+                            "       , is_deleted\n" +
+                            "       , in_use_count\n" +
+                            "  FROM directory\n" +
+                            " WHERE is_modified = 1\n" +
+                            " ORDER BY full_path DESC;");
 
             _insertStatement = _connection.prepareStatement
                     ("INSERT INTO directory\n" +
@@ -212,6 +250,9 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
             }
             if (_traverseDirectoryStatement != null && !_traverseDirectoryStatement.isClosed()) {
                 _traverseDirectoryStatement.close();
+            }
+            if (_queryChangesStatement != null && !_queryChangesStatement.isClosed()) {
+                _queryChangesStatement.close();
             }
             if (_insertStatement != null && !_insertStatement.isClosed()) {
                 _insertStatement.close();
@@ -283,5 +324,14 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                 " in_use_count integer);";
 
         executeSql(sql);
+
+        sql = "create index if not exists IDX_IS_MODIFIED\n" +
+                "on DIRECTORY (is_modified);";
+        executeSql(sql);
+
+        sql = "create index if not exists IDX_ATIME\n" +
+                "on DIRECTORY (atime);";
+        executeSql(sql);
     }
+
 }

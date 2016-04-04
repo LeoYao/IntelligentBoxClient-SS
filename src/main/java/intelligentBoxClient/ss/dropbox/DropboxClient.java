@@ -125,6 +125,11 @@ public class DropboxClient implements IDropboxClient {
         return result;
     }
 
+    public Metadata deleteFile(String remotePath) throws DbxException{
+        Deleter deleter = new Deleter(_configuration, _client, remotePath);
+        return deleter.execute();
+    }
+
     public FileMetadata uploadFile(String remotePath, String localPath) throws DbxException {
         Upload upload = new Upload(_configuration, _client, localPath, remotePath);
         FileMetadata result = upload.execute();

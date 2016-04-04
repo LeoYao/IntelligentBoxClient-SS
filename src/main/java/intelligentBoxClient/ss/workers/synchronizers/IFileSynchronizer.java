@@ -5,7 +5,7 @@ import intelligentBoxClient.ss.dao.pojo.RemoteChangeEntity;
 /**
  * Created by Leo on 4/3/16.
  */
-public interface IRemoteFileSynchronizer {
+public interface IFileSynchronizer {
     /*
      *  Download remote changed files when
      *  (1) the file has existed in local storage
@@ -14,5 +14,5 @@ public interface IRemoteFileSynchronizer {
      *  If the local file is locked but not yet modified,
      *  skip the file for this time and retry it next time.
      */
-    void synchronize(RemoteChangeEntity remoteChange);
+    void synchronize();
 }
