@@ -2,6 +2,7 @@ package intelligentBoxClient.ss.dropbox;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.Metadata;
 
 import java.util.List;
@@ -19,5 +20,6 @@ public interface IDropboxClient {
     List<Metadata> getChanges()  throws DbxException;
     FileMetadata downloadFile(String remotePath, String localPath) throws DbxException;
     FileMetadata uploadFile(String remotePath, String localPath) throws DbxException;
-    Metadata deleteFile(String remotePath) throws DbxException;
+    boolean deleteFile(String remotePath) throws DbxException;
+    boolean createFolder(String remotePath) throws DbxException;
 }

@@ -75,4 +75,8 @@ public abstract class FileSynchronizer implements IFileSynchronizer {
         entity.setRevision(metadata.getRev());
         return entity;
     }
+
+    protected boolean isInUse(DirectoryEntity entity){
+        return entity.isLocked() || entity.getInUseCount() > 0;
+    }
 }

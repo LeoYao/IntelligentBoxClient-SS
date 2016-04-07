@@ -2,10 +2,13 @@ package intelligentBoxClient.ss.dao.pojo;
 
 import com.dropbox.core.v2.files.DeletedMetadata;
 import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.Metadata;
 import intelligentBoxClient.ss.utils.Consts;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
+import java.util.Date;
 
 /**
  * Created by yaohx on 3/31/2016.
@@ -31,10 +34,14 @@ public class RemoteChangeEntity {
     public RemoteChangeEntity(DeletedMetadata metadata){
         initDeletion(metadata);
     }
+
     public RemoteChangeEntity(FileMetadata metadata){
         initFile(metadata);
     }
 
+    public RemoteChangeEntity(FolderMetadata metadata){
+        initFolder(metadata);
+    }
     public String getFullPath(){ return _fullPath; }
     public void setFullPath(String fullPath) { _fullPath = fullPath; }
 
@@ -96,8 +103,27 @@ public class RemoteChangeEntity {
         _atime = new Timestamp(metadata.getServerModified().getTime());
     }
 
+    protected void initFolder(FolderMetadata metadata){
+        initCommonVars(metadata);
+        _type = Consts.FOLDER;
+        _isDeleted = false;
+        _revision = "";
+        _size = 0;
+        Date now = new Date();
+        _mtime = new Timestamp(now.getTime());
+        _atime = new Timestamp(now.getTime());
+    }
+
     protected void initDeletion(DeletedMetadata metadata){
         initCommonVars(metadata);
         _isDeleted = true;
     }
+
+    public static Comparator<RemoteChangeEntity> DEFAULT_COMPARATOR =
+        new Comparator<RemoteChangeEntity>() {
+            @Override
+            public int compare(RemoteChangeEntity o1, RemoteChangeEntity o2) {
+                return -(o1.getFullPath().compareTo(o2.getFullPath()));
+            }
+        };
 }

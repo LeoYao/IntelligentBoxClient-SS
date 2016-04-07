@@ -9,10 +9,10 @@ import java.util.List;
  * Created by yaohx on 3/29/2016.
  */
 public interface IDirectoryDbContext extends ISqliteContext {
-    DirectoryEntity querySingleFile(String fullPath) throws SQLException;
-    List<DirectoryEntity> queryFiles(String parentFolderFullPath) throws SQLException;
-    List<DirectoryEntity> queryChanges() throws SQLException;
-    int updateFile(DirectoryEntity entry) throws SQLException;
-    int insertFile(DirectoryEntity entry) throws SQLException;
-    int deleteFile(String fullPath) throws SQLException;
+    DirectoryEntity querySingleEntry(String fullPath) throws SQLException;
+    List<DirectoryEntity> queryEntries(String parentFolderFullPath) throws SQLException;
+    List<DirectoryEntity> queryChangedEntries() throws SQLException;
+    int updateEntry(DirectoryEntity entry) throws SQLException;
+    int insertEntry(DirectoryEntity entry) throws SQLException;
+    int deleteEntry(String fullPath) throws SQLException;
 }

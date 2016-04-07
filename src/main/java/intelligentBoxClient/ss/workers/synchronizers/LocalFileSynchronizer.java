@@ -2,10 +2,13 @@ package intelligentBoxClient.ss.workers.synchronizers;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.FolderMetadata;
 import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dao.IDirectoryDbContext;
 import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
 import intelligentBoxClient.ss.dropbox.IDropboxClient;
+import intelligentBoxClient.ss.utils.Consts;
+import intelligentBoxClient.ss.utils.IUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +22,7 @@ import java.util.List;
  * Created by Leo on 4/3/16.
  */
 @Service(value="LocalFileSynchronizer")
-public class LocalFileSynchronizer implements IFileSynchronizer{
+public class LocalFileSynchronizer extends FileSynchronizer{
 
     private IDirectoryDbContext _directoryDbContext;
     private IConfiguration _configuration;
@@ -29,7 +32,9 @@ public class LocalFileSynchronizer implements IFileSynchronizer{
     @Autowired
     public LocalFileSynchronizer(IDirectoryDbContext directoryDbContext,
                                  IConfiguration configuration,
-                                 IDropboxClient dropboxClient){
+                                 IDropboxClient dropboxClient,
+                                 IUtils utils){
+        super(utils);
         logger = LogFactory.getLog(this.getClass());
         _directoryDbContext = directoryDbContext;
         _configuration = configuration;
@@ -51,7 +56,7 @@ public class LocalFileSynchronizer implements IFileSynchronizer{
 
     private List<DirectoryEntity> getLocalChanges(){
         try {
-            return _directoryDbContext.queryChanges();
+            return _directoryDbContext.queryChangedEntries();
         } catch (SQLException e) {
             logger.warn("Failed to get local changes", e);
             return new ArrayList<DirectoryEntity>();
@@ -66,21 +71,21 @@ public class LocalFileSynchronizer implements IFileSynchronizer{
             return;
         }
         if (change.isDeleted()){
-            deleteFile(change);
+            deleteEntry(change);
         } else {
-            uploadFile(change);
+            addEntry(change);
         }
 
     }
 
-    private void deleteFile(DirectoryEntity entity){
+    private void deleteEntry(DirectoryEntity entity){
 
         boolean inTransaction = false;
         boolean isError = false;
         try {
             logger.debug("Deleting [" + entity.getFullPath() + "]");
             inTransaction = _directoryDbContext.beginTransaction();
-            DirectoryEntity latestEntity = _directoryDbContext.querySingleFile(entity.getFullPath());
+            DirectoryEntity latestEntity = _directoryDbContext.querySingleEntry(entity.getFullPath());
             if (isInUse(latestEntity))
             {
                 logger.debug("Skip deleting [" + entity.getFullPath() + "] because it is in use.");
@@ -89,7 +94,7 @@ public class LocalFileSynchronizer implements IFileSynchronizer{
 
             _dropboxClient.deleteFile(entity.getFullPath());
 
-            _directoryDbContext.deleteFile(entity.getFullPath());
+            _directoryDbContext.deleteEntry(entity.getFullPath());
 
             logger.debug("Deleted [" + entity.getFullPath() + "]");
 
@@ -114,37 +119,46 @@ public class LocalFileSynchronizer implements IFileSynchronizer{
         }
     }
 
-    private void uploadFile(DirectoryEntity entity){
+    private void addEntry(DirectoryEntity entity){
         boolean inTransaction = false;
         boolean isError = false;
         try {
-            logger.debug("Uploading [" + entity.getFullPath() + "]");
+            logger.debug("Adding [" + entity.getFullPath() + "]");
             inTransaction = _directoryDbContext.beginTransaction();
-            DirectoryEntity latestEntity = _directoryDbContext.querySingleFile(entity.getFullPath());
+            DirectoryEntity latestEntity = _directoryDbContext.querySingleEntry(entity.getFullPath());
             if (isInUse(latestEntity))
             {
-                logger.debug("Skip uploading [" + entity.getFullPath() + "] because it is in use.");
-                return;
+                logger.debug("Skipped adding [" + entity.getFullPath() + "] because it is in use.");
+            } else {
+
+                if (latestEntity.getType() == Consts.FILE) {
+                    FileMetadata metadata = _dropboxClient.uploadFile(entity.getFullPath(), _configuration.getDataFolderPath() + entity.getFullPath());
+
+                    latestEntity.setSize(metadata.getSize());
+                    latestEntity.setModified(false);
+                    latestEntity.setRevision(metadata.getRev());
+
+                    _directoryDbContext.updateEntry(latestEntity);
+
+                    logger.debug("Uploaded file [" + entity.getFullPath() + "]");
+                } else {
+                    if (_dropboxClient.createFolder(entity.getFullPath())) {
+                        latestEntity.setModified(false);
+                        _directoryDbContext.updateEntry(latestEntity);
+                        logger.debug("Created folder [" + entity.getFullPath() + "]");
+                    } else {
+                        isError = true;
+                        logger.error("Failed to created folder [" + entity.getFullPath() + "]");
+                    }
+                }
             }
 
-            FileMetadata metadata = _dropboxClient.uploadFile(entity.getFullPath(), _configuration.getDataFolderPath() + entity.getFullPath());
-
-            latestEntity.setSize(metadata.getSize());
-            latestEntity.setModified(false);
-            latestEntity.setRevision(metadata.getRev());
-
-            _directoryDbContext.updateFile(latestEntity);
-
-            logger.debug("Uploaded [" + entity.getFullPath() + "]");
-
         } catch (SQLException e) {
-            logger.error("Failed to delete file [" + entity.getFullPath() + "]", e);
+            logger.error("Failed to add [" + entity.getFullPath() + "]", e);
             isError = true;
-            return;
         } catch (DbxException e) {
-            logger.warn("Failed to delete file [" + entity.getFullPath() + "]", e);
+            logger.warn("Failed to add [" + entity.getFullPath() + "]", e);
             isError = true;
-            return;
         }
         finally {
             if(inTransaction){
@@ -158,7 +172,5 @@ public class LocalFileSynchronizer implements IFileSynchronizer{
         }
     }
 
-    private boolean isInUse(DirectoryEntity entity){
-        return entity.isLocked() || entity.getInUseCount() > 0;
-    }
+
 }

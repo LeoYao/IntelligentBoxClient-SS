@@ -224,7 +224,7 @@ public class SynchronizationService {
             ctx.beginTransaction(1, 1);
             logger.debug("Tx is begun..");
 
-            ctx.deleteFile("/a/c");
+            ctx.deleteEntry("/a/c");
 
             DirectoryEntity entity = new DirectoryEntity();
             entity.setFullPath("/a/c");
@@ -240,10 +240,10 @@ public class SynchronizationService {
             entity.setInUseCount(100);
 
             logger.debug(entity.getAtime());
-            ctx.insertFile(entity);
+            ctx.insertEntry(entity);
             logger.debug(entity.getAtime());
 
-            DirectoryEntity entity2 = ctx.querySingleFile("/a/c");
+            DirectoryEntity entity2 = ctx.querySingleEntry("/a/c");
             logger.debug(entity2.getAtime());
             ctx.commitTransaction();
             logger.debug("Tx is commited..");

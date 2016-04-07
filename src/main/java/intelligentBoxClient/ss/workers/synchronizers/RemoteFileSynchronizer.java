@@ -3,6 +3,7 @@ package intelligentBoxClient.ss.workers.synchronizers;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.DeletedMetadata;
 import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.Metadata;
 import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dao.IDirectoryDbContext;
@@ -18,14 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -103,16 +102,19 @@ public class RemoteFileSynchronizer extends FileSynchronizer {
 
             for (Metadata metadata : changedMetadata) {
                 String fullPath = metadata.getPathLower();
-                String name = metadata.getName().toLowerCase();
                 RemoteChangeEntity remoteChangeEntity = null;
                 if (metadata instanceof DeletedMetadata) {
                     DeletedMetadata deletedMetadata = (DeletedMetadata)metadata;
                     remoteChangeEntity = new RemoteChangeEntity(deletedMetadata);
-                } else if (metadata instanceof FileMetadata){ //ignore folders
+                } else if (metadata instanceof FileMetadata){
                     FileMetadata fileMetadata = (FileMetadata)metadata;
                     remoteChangeEntity = new RemoteChangeEntity(fileMetadata);
-                } else {
-                    continue;//ignore folders
+                } else if (metadata instanceof FolderMetadata) {
+                    FolderMetadata folderMetadata = (FolderMetadata)metadata;
+                    remoteChangeEntity = new RemoteChangeEntity(folderMetadata);
+                }
+                else {
+                    continue;//ignore exceptions
                 }
                 if (existingRemoteChangeMap.containsKey(fullPath)) {
                     if (existingRemoteChangeMap.get(fullPath).isDeleted() != remoteChangeEntity.isDeleted()) {
@@ -126,6 +128,7 @@ public class RemoteFileSynchronizer extends FileSynchronizer {
         }
 
         existingRemoteChanges = new ArrayList<>(existingRemoteChangeMap.values());
+        Collections.sort(existingRemoteChanges, RemoteChangeEntity.DEFAULT_COMPARATOR);
         return existingRemoteChanges;
     }
 
@@ -140,7 +143,7 @@ public class RemoteFileSynchronizer extends FileSynchronizer {
             String parentPath = _utils.extractParentFolderPath(remoteChange.getFullPath(), remoteChange.getEntryName());
             inTransaction = _directoryDbContext.beginTransaction();
             isNotifInTransaction = _notificationDbContext.beginTransaction();
-            DirectoryEntity parentDirectoryEntity = _directoryDbContext.querySingleFile(parentPath);
+            DirectoryEntity parentDirectoryEntity = _directoryDbContext.querySingleEntry(parentPath);
 
             if (parentDirectoryEntity == null || !parentDirectoryEntity.isLocal()){
                 //No need to synchronize file if its parent folder is not local
@@ -149,10 +152,10 @@ public class RemoteFileSynchronizer extends FileSynchronizer {
                 return;
             }
 
-            DirectoryEntity directoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
+            DirectoryEntity directoryEntity = _directoryDbContext.querySingleEntry(remoteChange.getFullPath());
             if (directoryEntity == null) {
                 directoryEntity = getDirectoryEntity(remoteChange);
-                _directoryDbContext.insertFile(directoryEntity);
+                _directoryDbContext.insertEntry(directoryEntity);
                 _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
                 logger.debug("Added metadata of [" + remoteChange.getFullPath() + "] .");
 
@@ -161,52 +164,51 @@ public class RemoteFileSynchronizer extends FileSynchronizer {
                 _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
                 logger.debug("Skipped adding [" + remoteChange.getFullPath() + "], because the revision is same.");
 
-            } else if (directoryEntity.isLocked() || directoryEntity.getInUseCount() > 0 ) {
-                if (directoryEntity.isModified()){
-                    //No need to download if the local file has been modified
-                    _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
-                    logger.debug("Skipped downloading [" + remoteChange.getFullPath() + "], because the local file has been modified.");
-                } else {
-                    logger.debug("Skipped downloading [" + remoteChange.getFullPath() + "], because the local file is in use. Another attempt will be made next time.");
-                }
-
             } else if (!directoryEntity.isLocal()){
                 directoryEntity = getDirectoryEntity(remoteChange, directoryEntity);
-                _directoryDbContext.updateFile(directoryEntity);
+                _directoryDbContext.updateEntry(directoryEntity);
                 _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
                 logger.debug("Synchronized metadata of [" + remoteChange.getFullPath() + "].");
-
-            } else if (remoteChange.getType() != Consts.FILE){
-                _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
-                logger.debug("Skipped downloading [" + remoteChange.getFullPath() + "], because it is a folder.");
-
             } else {
-                //Do not block other transaction while downloading files
-                _directoryDbContext.rollbackTransaction();
-                inTransaction = false;
-
-                String tmpPath = _configuration.getTmpFolderPath() + remoteChange.getEntryName();
-                FileMetadata metadata = downloadFile(remoteChange.getFullPath(), tmpPath);
-
-                Path tmpInput = Paths.get(tmpPath);
-
-                if (metadata != null){
-                    String localPath = _configuration.getDataFolderPath() + remoteChange.getFullPath();
-
-                    inTransaction = _directoryDbContext.beginTransaction();
-                    directoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
-
-                    if (directoryEntity != null && directoryEntity.isLocal() && !directoryEntity.isLocked())
-                    {
-                        Path localOutput = Paths.get(localPath);
-                        Files.move(tmpInput, localOutput, REPLACE_EXISTING);
-                        directoryEntity = getDirectoryEntity(metadata, directoryEntity);
-                        _directoryDbContext.updateFile(directoryEntity);
+                if (isInUse(directoryEntity)) {
+                    if (directoryEntity.isModified()) {
+                        //No need to download if the local file has been modified
                         _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
-                        logger.debug("Downloaded [" + remoteChange.getFullPath() + "].");
+                        logger.debug("Skipped downloading [" + remoteChange.getFullPath() + "], because the local file has been modified.");
                     } else {
-                        Files.deleteIfExists(tmpInput);
-                        logger.debug("Skipped synchronizing [" + remoteChange.getFullPath() + "], because something changed during downloading. Another attempt will be made next time.");
+                        logger.debug("Skipped downloading [" + remoteChange.getFullPath() + "], because the local file is in use. Another attempt will be made next time.");
+                    }
+
+                } else if (remoteChange.getType() != Consts.FILE) {
+                    _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                    logger.debug("Skipped downloading [" + remoteChange.getFullPath() + "], because it is a folder.");
+                } else {
+                    //Do not block other transaction while downloading files
+                    _directoryDbContext.rollbackTransaction();
+                    inTransaction = false;
+
+                    String tmpPath = _configuration.getTmpFolderPath() + remoteChange.getEntryName();
+                    FileMetadata metadata = downloadFile(remoteChange.getFullPath(), tmpPath);
+
+                    Path tmpInput = Paths.get(tmpPath);
+
+                    if (metadata != null) {
+                        String localPath = _configuration.getDataFolderPath() + remoteChange.getFullPath();
+
+                        inTransaction = _directoryDbContext.beginTransaction();
+                        directoryEntity = _directoryDbContext.querySingleEntry(remoteChange.getFullPath());
+
+                        if (directoryEntity != null && directoryEntity.isLocal() && !directoryEntity.isLocked()) {
+                            Path localOutput = Paths.get(localPath);
+                            Files.move(tmpInput, localOutput, REPLACE_EXISTING);
+                            directoryEntity = getDirectoryEntity(metadata, directoryEntity);
+                            _directoryDbContext.updateEntry(directoryEntity);
+                            _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                            logger.debug("Downloaded [" + remoteChange.getFullPath() + "].");
+                        } else {
+                            Files.deleteIfExists(tmpInput);
+                            logger.debug("Skipped synchronizing [" + remoteChange.getFullPath() + "], because something changed during downloading. Another attempt will be made next time.");
+                        }
                     }
                 }
             }
@@ -247,17 +249,17 @@ public class RemoteFileSynchronizer extends FileSynchronizer {
         try {
             isNotifInTransaction = _notificationDbContext.beginTransaction();
             inTransaction = _directoryDbContext.beginTransaction();
-            DirectoryEntity directoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
+            DirectoryEntity directoryEntity = _directoryDbContext.querySingleEntry(remoteChange.getFullPath());
             if (directoryEntity == null){
                 _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
                 logger.debug("Skipped deleting [" + remoteChange.getFullPath() + "] because the file is not aware locally.");
             }
             else if (!directoryEntity.isLocal()){
                 _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
-                _directoryDbContext.deleteFile(remoteChange.getFullPath());
+                _directoryDbContext.deleteEntry(remoteChange.getFullPath());
                 logger.debug("Deleted metadata of [" + remoteChange.getFullPath() + "].");
             }
-            else if (directoryEntity.isLocked() || directoryEntity.getInUseCount() > 0){
+            else if (isInUse(directoryEntity)){
                 if (directoryEntity.isModified()) {
                     _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
                     logger.debug("Skipped deleting [" + remoteChange.getFullPath() + "] because the local file is modified.");
@@ -265,11 +267,20 @@ public class RemoteFileSynchronizer extends FileSynchronizer {
                     logger.debug("Skipped deleting [" + remoteChange.getFullPath() + "] because the local file is in use. Another attempt will be made next time.");
                 }
             } else { //!directoryEntity.isLocked() && !directoryEntity.isModified() && directoryEntity.isLocal())
-                Path localOutput = Paths.get(localPath);
-                Files.deleteIfExists(localOutput);
-                _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
-                _directoryDbContext.deleteFile(remoteChange.getFullPath());
-                logger.debug("Deleted " + remoteChange.getFullPath() + ".");
+                try {
+                    Path localOutput = Paths.get(localPath);
+                    Files.deleteIfExists(localOutput);
+                    _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                    _directoryDbContext.deleteEntry(remoteChange.getFullPath());
+                    logger.debug("Deleted [" + remoteChange.getFullPath() + "].");
+                } catch (DirectoryNotEmptyException ex){
+                    //there must be something just or added or modified in the folder, so need to recreate the folder on dropbox
+                    directoryEntity.setModified(true);
+                    _directoryDbContext.updateEntry(directoryEntity);
+                    _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                    logger.debug("Skipped deleting [" + remoteChange.getFullPath() + "], because there is still some change inside of it.");
+                }
+
             }
         } catch (IOException e) {
             logger.warn("Failed to delete [" + remoteChange.getFullPath() + "].", e);

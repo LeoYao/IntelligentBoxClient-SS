@@ -30,7 +30,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         super(configuration);
     }
 
-    public DirectoryEntity querySingleFile(String fullPath) throws SQLException {
+    public DirectoryEntity querySingleEntry(String fullPath) throws SQLException {
         DirectoryEntity result = null;
         ResultSet rs = null;
 
@@ -50,7 +50,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         return result;
     }
 
-    public List<DirectoryEntity> queryFiles(String parentFolderFullPath) throws SQLException {
+    public List<DirectoryEntity> queryEntries(String parentFolderFullPath) throws SQLException {
         List<DirectoryEntity> results = new LinkedList<DirectoryEntity>();
         ResultSet rs = null;
 
@@ -69,7 +69,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         return results;
     }
 
-    public List<DirectoryEntity> queryChanges() throws SQLException {
+    public List<DirectoryEntity> queryChangedEntries() throws SQLException {
         List<DirectoryEntity> results = new LinkedList<DirectoryEntity>();
         ResultSet rs = null;
 
@@ -87,7 +87,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         return results;
     }
 
-    public int updateFile(DirectoryEntity entity) throws SQLException {
+    public int updateEntry(DirectoryEntity entity) throws SQLException {
         int affectedRowCnt = 0;
 
         _updateStatement.setString(1, entity.getParentFolderFullPath());
@@ -109,7 +109,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         return affectedRowCnt;
     }
 
-    public int insertFile(DirectoryEntity entity) throws SQLException {
+    public int insertEntry(DirectoryEntity entity) throws SQLException {
         int affectedRowCnt = 0;
 
         _insertStatement.setString(1, entity.getFullPath());
@@ -134,7 +134,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         return affectedRowCnt;
     }
 
-    public int deleteFile(String fullPath) throws SQLException {
+    public int deleteEntry(String fullPath) throws SQLException {
         int affectedRowCnt = 0;
 
         _deleteStatement.setString(1, fullPath);

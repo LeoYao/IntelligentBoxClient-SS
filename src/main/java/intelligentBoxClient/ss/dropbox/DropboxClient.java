@@ -125,15 +125,33 @@ public class DropboxClient implements IDropboxClient {
         return result;
     }
 
-    public Metadata deleteFile(String remotePath) throws DbxException{
+    @Override
+    public boolean deleteFile(String remotePath) throws DbxException{
         Deleter deleter = new Deleter(_configuration, _client, remotePath);
-        return deleter.execute();
+        Boolean result = deleter.execute();
+        if (result == null){
+            return false;
+        } else {
+            return result;
+        }
     }
 
+    @Override
     public FileMetadata uploadFile(String remotePath, String localPath) throws DbxException {
         Upload upload = new Upload(_configuration, _client, localPath, remotePath);
         FileMetadata result = upload.execute();
         return result;
+    }
+
+    @Override
+    public boolean createFolder(String remotePath) throws DbxException {
+        CreateFolder createFolder = new CreateFolder(_configuration, _client, remotePath);
+        Boolean result = createFolder.execute();
+        if (result == null) {
+            return false;
+        } else {
+            return result;
+        }
     }
 
     private boolean initAccessToken() {
