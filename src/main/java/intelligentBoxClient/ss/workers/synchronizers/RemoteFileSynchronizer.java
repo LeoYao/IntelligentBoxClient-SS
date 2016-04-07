@@ -10,7 +10,8 @@ import intelligentBoxClient.ss.dao.INotificationDbContext;
 import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
 import intelligentBoxClient.ss.dao.pojo.RemoteChangeEntity;
 import intelligentBoxClient.ss.dropbox.IDropboxClient;
-import intelligentBoxClient.ss.persistence.IDirectoryDbSaver;
+import intelligentBoxClient.ss.utils.Consts;
+import intelligentBoxClient.ss.utils.IUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,26 +33,24 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * Created by Leo on 4/3/16.
  */
 @Service(value="RemoteFileSynchronizer")
-public class RemoteFileSynchronizer implements IFileSynchronizer {
+public class RemoteFileSynchronizer extends FileSynchronizer {
 
     private IDirectoryDbContext _directoryDbContext;
     private INotificationDbContext _notificationDbContext;
     private IConfiguration _configuration;
-    private IDirectoryDbSaver _directoryDbSaver;
     private IDropboxClient _dropboxClient;
     private Log logger;
-
     @Autowired
     public RemoteFileSynchronizer(IDirectoryDbContext directoryDbContext,
                                   INotificationDbContext notificationDbContext,
                                   IConfiguration configuration,
-                                  IDirectoryDbSaver directoryDbSaver,
-                                  IDropboxClient dropboxClient){
+                                  IDropboxClient dropboxClient,
+                                  IUtils utils){
+        super(utils);
         logger = LogFactory.getLog(this.getClass());
         _directoryDbContext = directoryDbContext;
         _notificationDbContext = notificationDbContext;
         _configuration = configuration;
-        _directoryDbSaver = directoryDbSaver;
         _dropboxClient = dropboxClient;
     }
 
@@ -80,9 +79,9 @@ public class RemoteFileSynchronizer implements IFileSynchronizer {
     private void synchronizeChange(RemoteChangeEntity remoteChange){
 
         if (remoteChange.isDeleted()){
-            deleteFile(remoteChange);
+            deleteEntry(remoteChange);
         } else {
-            addFile(remoteChange);
+            addEntry(remoteChange);
         }
     }
 
@@ -107,10 +106,11 @@ public class RemoteFileSynchronizer implements IFileSynchronizer {
                 String name = metadata.getName().toLowerCase();
                 RemoteChangeEntity remoteChangeEntity = null;
                 if (metadata instanceof DeletedMetadata) {
-                    remoteChangeEntity = new RemoteChangeEntity(fullPath, name, true, "");
+                    DeletedMetadata deletedMetadata = (DeletedMetadata)metadata;
+                    remoteChangeEntity = new RemoteChangeEntity(deletedMetadata);
                 } else if (metadata instanceof FileMetadata){ //ignore folders
                     FileMetadata fileMetadata = (FileMetadata)metadata;
-                    remoteChangeEntity = new RemoteChangeEntity(fullPath, name, false, fileMetadata.getRev());
+                    remoteChangeEntity = new RemoteChangeEntity(fileMetadata);
                 } else {
                     continue;//ignore folders
                 }
@@ -129,135 +129,157 @@ public class RemoteFileSynchronizer implements IFileSynchronizer {
         return existingRemoteChanges;
     }
 
+    private void addEntry(RemoteChangeEntity remoteChange){
+        logger.debug("Adding [" + remoteChange.getFullPath() + "].");
 
-    private void addFile(RemoteChangeEntity remoteChange){
-
-        logger.debug("Adding [" + remoteChange.getFullPath() + "] from dropbox.");
+        boolean isError = false;
+        boolean inTransaction = false;
 
         try {
-            DirectoryEntity directoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
+            String parentPath = _utils.extractParentFolderPath(remoteChange.getFullPath(), remoteChange.getEntryName());
+            inTransaction = _directoryDbContext.beginTransaction();
+            DirectoryEntity parentDirectoryEntity = _directoryDbContext.querySingleFile(parentPath);
 
-            if (directoryEntity == null) {
-                //No need to download if the file is not local or the local file has been modified
+            if (parentDirectoryEntity == null || !parentDirectoryEntity.isLocal()){
+                //No need to synchronize file if its parent folder is not local
                 _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
-                logger.debug("Skipped synchronizing " + remoteChange.getFullPath() + " from dropbox.");
-            } else if (directoryEntity.isModified() || !directoryEntity.isLocal()
-                    || directoryEntity.getRevision().equals(remoteChange.getRevision())){
-
+                logger.debug("Skipped adding [" + remoteChange.getFullPath() + "], because Parent folder is not local.");
+                return;
             }
 
+            DirectoryEntity directoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
+            if (directoryEntity == null) {
+                directoryEntity = getDirectoryEntity(remoteChange);
+                _directoryDbContext.insertFile(directoryEntity);
+                _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                logger.debug("Added metadata of [" + remoteChange.getFullPath() + "] .");
 
-            if (!directoryEntity.isLocked()) {
-                if (remoteChange.isDeleted()){
-                    deleteFile(remoteChange);
+            } else if (directoryEntity.getRevision().equals(remoteChange.getRevision())){
+                //No need to download if the revision is not changed
+                _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                logger.debug("Skipped adding [" + remoteChange.getFullPath() + "], because the revision is same.");
+
+            } else if (directoryEntity.isLocked() || directoryEntity.getInUseCount() > 0 ) {
+                if (directoryEntity.isModified()){
+                    //No need to download if the local file has been modified
+                    _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                    logger.debug("Skipped downloading [" + remoteChange.getFullPath() + "], because the local file has been modified.");
                 } else {
-                    addFile(remoteChange);
+                    logger.debug("Skipped downloading [" + remoteChange.getFullPath() + "], because the local file is in use. Another attempt will be made next time.");
                 }
+
+            } else if (!directoryEntity.isLocal()){
+                directoryEntity = getDirectoryEntity(remoteChange, directoryEntity);
+                _directoryDbContext.updateFile(directoryEntity);
+                _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                logger.debug("Synchronized metadata of [" + remoteChange.getFullPath() + "].");
+
+            } else if (remoteChange.getType() != Consts.FILE){
+                _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                logger.debug("Skipped downloading [" + remoteChange.getFullPath() + "], because it is a folder.");
+
             } else {
-                logger.debug("Skipped synchronizing " + remoteChange.getFullPath() + " from dropbox. Another attempt will be made next time.");
+                //Do not block other transaction while downloading files
+                _directoryDbContext.rollbackTransaction();
+                inTransaction = false;
+
+                String tmpPath = _configuration.getTmpFolderPath() + remoteChange.getEntryName();
+                FileMetadata metadata = downloadFile(remoteChange.getFullPath(), tmpPath);
+
+                Path tmpInput = Paths.get(tmpPath);
+
+                if (metadata != null){
+                    String localPath = _configuration.getDataFolderPath() + remoteChange.getFullPath();
+
+                    inTransaction = _directoryDbContext.beginTransaction();
+                    directoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
+
+                    if (directoryEntity != null && directoryEntity.isLocal() && !directoryEntity.isLocked())
+                    {
+                        Path localOutput = Paths.get(localPath);
+                        Files.move(tmpInput, localOutput, REPLACE_EXISTING);
+                        directoryEntity = getDirectoryEntity(metadata, directoryEntity);
+                        _directoryDbContext.updateFile(directoryEntity);
+                        logger.debug("Downloaded [" + remoteChange.getFullPath() + "].");
+                    } else {
+                        Files.deleteIfExists(tmpInput);
+                        logger.debug("Skipped synchronizing [" + remoteChange.getFullPath() + "], because something changed during downloading. Another attempt will be made next time.");
+                    }
+                }
             }
-
         } catch (SQLException e) {
-            logger.warn("Failed to synchronize [" + remoteChange.getFullPath() + "] from dropbox", e);
+            logger.warn("Failed to add [" + remoteChange.getFullPath() + "].", e);
+            isError = true;
             return;
+        } catch (IOException e) {
+            logger.warn("Failed to add [" + remoteChange.getFullPath() + "].", e);
+            isError = true;
+        } finally {
+            if (inTransaction) {
+                if (isError){
+                    _directoryDbContext.rollbackTransaction();
+                } else {
+                    _directoryDbContext.commitTransaction();
+                }
+            }
         }
+    }
 
+    private void deleteEntry(RemoteChangeEntity remoteChange){
+        logger.debug("Deleting [" + remoteChange.getFullPath() + "].");
 
-        String tmpPath = _configuration.getTmpFolderPath() + remoteChange.getEntryName();
         String localPath = _configuration.getDataFolderPath() + remoteChange.getFullPath();
+        boolean isError = false;
+        boolean inTransaction = false;
+
+        try {
+            inTransaction = _directoryDbContext.beginTransaction();
+            DirectoryEntity directoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
+            if (directoryEntity == null || !directoryEntity.isLocal()){
+                _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                logger.debug("Skipped deleting [" + remoteChange.getFullPath() + "] because the file is not local.");
+            } else if (directoryEntity.isLocked() || directoryEntity.getInUseCount() > 0){
+                if (directoryEntity.isModified()) {
+                    _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                    logger.debug("Skipped deleting [" + remoteChange.getFullPath() + "] because the local file is modified.");
+                } else {
+                    logger.debug("Skipped deleting [" + remoteChange.getFullPath() + "] because the local file is in use. Another attempt will be made next time.");
+                }
+            } else { //!directoryEntity.isLocked() && !directoryEntity.isModified() && directoryEntity.isLocal())
+                Path localOutput = Paths.get(localPath);
+                Files.deleteIfExists(localOutput);
+                _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                _directoryDbContext.deleteFile(remoteChange.getFullPath());
+                logger.debug("Deleted " + remoteChange.getFullPath() + " due to remote change in dropbox.");
+            }
+        } catch (IOException e) {
+            logger.warn("Failed to delete [" + remoteChange.getFullPath() + "] from dropbox", e);
+            isError = true;
+        } catch (SQLException e) {
+            logger.warn("Failed to delete [" + remoteChange.getFullPath() + "] from dropbox", e);
+            isError = true;
+        }
+        finally {
+            if (inTransaction) {
+                if (isError){
+                    _directoryDbContext.rollbackTransaction();
+                } else {
+                    _directoryDbContext.commitTransaction();
+                }
+            }
+        }
+    }
+
+    private FileMetadata downloadFile(String remotePath, String localPath){
+
         FileMetadata metadata = null;
 
         try {
-            metadata = _dropboxClient.downloadFile(remoteChange.getFullPath(), tmpPath);
+            metadata = _dropboxClient.downloadFile(remotePath, localPath);
         } catch (DbxException e) {
-            logger.warn("Failed to download [" + remoteChange.getFullPath() + "]", e);
-            return;
+            logger.warn("Failed to download [" + remotePath + "]", e);
         }
 
-        boolean isError = false;
-        boolean inTransaction = false;
-        Path tmpInput = Paths.get(tmpPath);
-
-        try {
-            inTransaction = _directoryDbContext.beginTransaction();
-            DirectoryEntity latestDirectoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
-            if (!latestDirectoryEntity.isLocked()
-                    && !latestDirectoryEntity.isModified()
-                    && latestDirectoryEntity.isLocal()) {
-                Path localOutput = Paths.get(localPath);
-                Files.move(tmpInput, localOutput, REPLACE_EXISTING);
-                _directoryDbSaver.save(metadata);
-                _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
-            } else {
-                if (latestDirectoryEntity.isModified() || !latestDirectoryEntity.isLocal()) {
-                    _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
-                }
-
-                Files.delete(tmpInput);
-            }
-
-            logger.debug("Downloaded " + remoteChange.getFullPath() + " from dropbox.");
-
-        } catch (IOException e) {
-            logger.warn("Failed to download [" + remoteChange.getFullPath() + "] from dropbox", e);
-            isError = true;
-        } catch (SQLException e) {
-            logger.warn("Failed to download [" + remoteChange.getFullPath() + "] from dropbox", e);
-            isError = true;
-        }
-        finally {
-            if (inTransaction) {
-                if (isError){
-                    _directoryDbContext.rollbackTransaction();
-                } else {
-                    _directoryDbContext.commitTransaction();
-                }
-            }
-        }
+        return metadata;
     }
-
-    private void deleteFile(RemoteChangeEntity remoteChange){
-        logger.debug("Deleting " + remoteChange.getFullPath() + " due to remote change in dropbox.");
-
-        String localPath = _configuration.getDataFolderPath() + remoteChange.getFullPath();
-        boolean isError = false;
-        boolean inTransaction = false;
-
-        try {
-            inTransaction = _directoryDbContext.beginTransaction();
-            DirectoryEntity directoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
-            if (!directoryEntity.isLocked()
-                    && !directoryEntity.isModified()
-                    && directoryEntity.isLocal()) {
-
-                Path localOutput = Paths.get(localPath);
-                Files.delete(localOutput);
-                _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
-                _directoryDbContext.deleteFile(remoteChange.getFullPath());
-            } else {
-                if (directoryEntity.isModified() || !directoryEntity.isLocal()) {
-                    _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
-                }
-            }
-
-            logger.debug("Deleted " + remoteChange.getFullPath() + " due to remote change in dropbox.");
-
-        } catch (IOException e) {
-            logger.warn("Failed to delete [" + remoteChange.getFullPath() + "] from dropbox", e);
-            isError = true;
-        } catch (SQLException e) {
-            logger.warn("Failed to delete [" + remoteChange.getFullPath() + "] from dropbox", e);
-            isError = true;
-        }
-        finally {
-            if (inTransaction) {
-                if (isError){
-                    _directoryDbContext.rollbackTransaction();
-                } else {
-                    _directoryDbContext.commitTransaction();
-                }
-            }
-        }
-    }
-
 }

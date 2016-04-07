@@ -5,6 +5,7 @@ import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.Metadata;
 import intelligentBoxClient.ss.dao.IDirectoryDbContext;
 import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
+import intelligentBoxClient.ss.utils.Consts;
 import intelligentBoxClient.ss.utils.IUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +46,7 @@ public class DirectoryDbSaver implements IDirectoryDbSaver {
                 entity.setEntryName(name);
                 entity.setOldFullPath("");
                 entity.setParentFolderFullPath(parentPath);
-                entity.setType(DirectoryEntity.FILE);
+                entity.setType(Consts.FILE);
                 entity.setSize(metadata.getSize());
                 entity.setMtime(metadata.getServerModified().getTime());
                 entity.setAtime(metadata.getServerModified().getTime());
@@ -61,7 +62,7 @@ public class DirectoryDbSaver implements IDirectoryDbSaver {
                 entity.setFullPath(fullPath);
                 entity.setEntryName(name);
                 entity.setParentFolderFullPath(parentPath);
-                entity.setType(DirectoryEntity.FILE);
+                entity.setType(Consts.FILE);
                 entity.setSize(metadata.getSize());
                 entity.setMtime(metadata.getServerModified().getTime());
                 entity.setAtime(metadata.getServerModified().getTime());
@@ -96,7 +97,7 @@ public class DirectoryDbSaver implements IDirectoryDbSaver {
                 entity.setFullPath(fullPath);
                 entity.setEntryName(name);
                 entity.setParentFolderFullPath(parentPath);
-                entity.setType(DirectoryEntity.FOLDER);
+                entity.setType(Consts.FOLDER);
                 entity.setSize(0);
                 long now = new Date().getTime();
                 entity.setMtime(now);
@@ -110,7 +111,7 @@ public class DirectoryDbSaver implements IDirectoryDbSaver {
                 entity.setFullPath(fullPath);
                 entity.setEntryName(name);
                 entity.setParentFolderFullPath(parentPath);
-                entity.setType(DirectoryEntity.FOLDER);
+                entity.setType(Consts.FOLDER);
                 entity.setSize(0);
                 long now = new Date().getTime();
                 entity.setMtime(now);

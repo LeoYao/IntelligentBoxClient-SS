@@ -21,10 +21,16 @@ public class RemoteChangeEntity {
     private Timestamp _atime;
     private int _type;
 
+    public RemoteChangeEntity(){
+    }
+
     public RemoteChangeEntity(Metadata metadata){
         initCommonVars(metadata);
     }
 
+    public RemoteChangeEntity(DeletedMetadata metadata){
+        initDeletion(metadata);
+    }
     public RemoteChangeEntity(FileMetadata metadata){
         initFile(metadata);
     }
@@ -81,11 +87,17 @@ public class RemoteChangeEntity {
     }
 
     protected void initFile(FileMetadata metadata){
+        initCommonVars(metadata);
         _type = Consts.FILE;
         _isDeleted = false;
         _revision = metadata.getRev();
         _size = metadata.getSize();
         _mtime = new Timestamp(metadata.getServerModified().getTime());
         _atime = new Timestamp(metadata.getServerModified().getTime());
+    }
+
+    protected void initDeletion(DeletedMetadata metadata){
+        initCommonVars(metadata);
+        _isDeleted = true;
     }
 }
