@@ -55,7 +55,7 @@ public class RemoteChangeEntity {
     }
 
     public Timestamp getMtime() {
-        return _mtime;
+        return _mtime == null ? new Timestamp(0) : _mtime ;
     }
     public void setMtime(Timestamp mtime) {
         this._mtime = mtime;
@@ -65,7 +65,7 @@ public class RemoteChangeEntity {
     }
 
     public Timestamp getAtime() {
-        return _atime;
+        return _atime == null ? new Timestamp(0) : _atime ;
     }
     public void setAtime(Timestamp atime) {
         this._atime = atime;

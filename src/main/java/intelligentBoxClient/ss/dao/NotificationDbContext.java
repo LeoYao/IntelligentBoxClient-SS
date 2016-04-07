@@ -194,7 +194,7 @@ public class NotificationDbContext extends SqliteContext implements INotificatio
                                                    "    is_deleted = ?,\n" +
                                                    "    mtime = ?,\n" +
                                                    "    atime = ?,\n" +
-                                                   "    revision = ?,\n" +
+                                                   "    revision = ?\n" +
                                                    " WHERE full_path = ?;");
         }
         catch (SQLException e) {

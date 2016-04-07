@@ -1,5 +1,9 @@
 package intelligentBoxClient.ss.dao.pojo;
 
+import com.dropbox.core.v2.files.FileMetadata;
+import intelligentBoxClient.ss.utils.Consts;
+import intelligentBoxClient.ss.utils.Utils;
+
 import java.sql.Timestamp;
 
 /**
@@ -21,6 +25,44 @@ public class DirectoryEntity {
     private boolean _isDeleted;
     private long _inUseCount;
     private String _revision;
+
+    public DirectoryEntity(){
+
+    }
+
+    public DirectoryEntity(FileMetadata metadata){
+        _fullPath = metadata.getPathLower();
+        _entryName = metadata.getName().toLowerCase();
+        _parentFolderFullPath = new Utils().extractParentFolderPath(_fullPath, _entryName);
+        _oldFullPath = "";
+        _type = Consts.FILE;
+        _size = metadata.getSize();
+        _mtime = new Timestamp(metadata.getServerModified().getTime());
+        _atime = new Timestamp(metadata.getServerModified().getTime());
+        _isLocked = false;
+        _isModified = false;
+        _isLocal = false;
+        _isDeleted= false;
+        _inUseCount= 0;
+        _revision = metadata.getRev();
+    }
+
+    public DirectoryEntity(FileMetadata metadata, DirectoryEntity oldEntity){
+        _fullPath = metadata.getPathLower();
+        _entryName = metadata.getName().toLowerCase();
+        _parentFolderFullPath = new Utils().extractParentFolderPath(_fullPath, _entryName);
+        _oldFullPath = oldEntity.getOldFullPath();
+        _type = Consts.FILE;
+        _size = metadata.getSize();
+        _mtime = new Timestamp(metadata.getServerModified().getTime());
+        _atime = new Timestamp(metadata.getServerModified().getTime());
+        _isLocked = oldEntity.isLocked();
+        _isModified = oldEntity.isModified();
+        _isLocal = oldEntity.isLocal();
+        _isDeleted = oldEntity.isDeleted();
+        _inUseCount = oldEntity.getInUseCount();
+        _revision = metadata.getRev();
+    }
 
     public String getFullPath() {
         return _fullPath;

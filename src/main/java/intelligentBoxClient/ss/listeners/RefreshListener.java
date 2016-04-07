@@ -4,8 +4,11 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
 import intelligentBoxClient.ss.bootstrapper.Bootstrapper;
 import intelligentBoxClient.ss.bootstrapper.IConfiguration;
+import intelligentBoxClient.ss.dao.IDirectoryDbContext;
+import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
 import intelligentBoxClient.ss.dropbox.IDropboxClient;
 import intelligentBoxClient.ss.persistence.IDirectoryDbSaver;
+import intelligentBoxClient.ss.utils.Consts;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.ExitCodeGenerator;
@@ -15,6 +18,10 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.stereotype.Component;
+
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * Created by yaohx on 3/24/2016.
@@ -47,18 +54,42 @@ public class RefreshListener implements ApplicationListener<ContextRefreshedEven
 
     public void genData(ApplicationContext appCtx){
         IDropboxClient dbxClient = appCtx.getBean(IDropboxClient.class);
-        IDirectoryDbSaver dirDbSaver = appCtx.getBean(IDirectoryDbSaver.class);
+
+        IDirectoryDbContext dirDbCtx = appCtx.getBean(IDirectoryDbContext.class);
 
         IConfiguration configuration = appCtx.getBean(IConfiguration.class);
 
-        for (int i = 0; i < 3; ++i) {
-            try {
+        try {
+            DirectoryEntity folderEntity = dirDbCtx.querySingleFile("/testdata");
+            if (folderEntity == null){
+                folderEntity = new DirectoryEntity();
+                folderEntity.setFullPath("/testdata");
+                folderEntity.setParentFolderFullPath("/");
+                folderEntity.setEntryName("testdata");
+                folderEntity.setType(Consts.FOLDER);
+                folderEntity.setMtime(new Timestamp(new Date().getTime()));
+                folderEntity.setAtime(new Timestamp(new Date().getTime()));
+                folderEntity.setLocal(true);
+                dirDbCtx.insertFile(folderEntity);
+            }
+
+            for (int i = 0; i < 3; ++i) {
+
                 String remotePath = "/testdata/test" + i + ".txt";
                 FileMetadata metadata = dbxClient.uploadFile(remotePath, configuration.getDataFolderPath() + "testdata/test" + i + ".txt");
-                dirDbSaver.save(metadata);
-            } catch (DbxException e) {
-                logger.error(e);
+                DirectoryEntity directoryEntity = dirDbCtx.querySingleFile(remotePath);
+                if (directoryEntity == null) {
+                    directoryEntity = new DirectoryEntity(metadata);
+                    dirDbCtx.insertFile(directoryEntity);
+                } else {
+                    directoryEntity = new DirectoryEntity(metadata, directoryEntity);
+                    dirDbCtx.updateFile(directoryEntity);
+                }
             }
+        } catch (DbxException e) {
+            logger.error(e);
+        } catch (SQLException e) {
+            logger.error(e);
         }
     }
 }
