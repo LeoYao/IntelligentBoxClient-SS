@@ -7,12 +7,6 @@ import java.sql.Timestamp;
  */
 public class DirectoryEntity {
 
-    public static final int FOLDER = 1;
-    public static final int FILE = 2;
-
-    public static final int YES = 1;
-    public static final int NO = 0;
-
     private String _fullPath;
     private String _parentFolderFullPath;
     private String _entryName;

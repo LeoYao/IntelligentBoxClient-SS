@@ -78,27 +78,11 @@ public class RemoteFileSynchronizer implements IFileSynchronizer {
     }
 
     private void synchronizeChange(RemoteChangeEntity remoteChange){
-        try {
-            DirectoryEntity directoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
 
-            if (directoryEntity == null || directoryEntity.isModified() || !directoryEntity.isLocal()
-                || directoryEntity.getRevision().equals(remoteChange.getRevision())) {
-                //No need to download if the file is not local or the local file has been modified
-                _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
-                logger.debug("Skipped synchronizing " + remoteChange.getFullPath() + " from dropbox.");
-            } else if (!directoryEntity.isLocked()) {
-                if (remoteChange.isDeleted()){
-                    deleteFile(remoteChange);
-                } else {
-                    downloadFile(remoteChange);
-                }
-            } else {
-                logger.debug("Skipped synchronizing " + remoteChange.getFullPath() + " from dropbox. Another attempt will be made next time.");
-            }
-
-        } catch (SQLException e) {
-            logger.warn("Failed to synchronize [" + remoteChange.getFullPath() + "] from dropbox", e);
-            return;
+        if (remoteChange.isDeleted()){
+            deleteFile(remoteChange);
+        } else {
+            addFile(remoteChange);
         }
     }
 
@@ -146,9 +130,38 @@ public class RemoteFileSynchronizer implements IFileSynchronizer {
     }
 
 
-    private void downloadFile(RemoteChangeEntity remoteChange){
+    private void addFile(RemoteChangeEntity remoteChange){
 
-        logger.debug("Downloading " + remoteChange.getFullPath() + " from dropbox.");
+        logger.debug("Adding [" + remoteChange.getFullPath() + "] from dropbox.");
+
+        try {
+            DirectoryEntity directoryEntity = _directoryDbContext.querySingleFile(remoteChange.getFullPath());
+
+            if (directoryEntity == null) {
+                //No need to download if the file is not local or the local file has been modified
+                _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
+                logger.debug("Skipped synchronizing " + remoteChange.getFullPath() + " from dropbox.");
+            } else if (directoryEntity.isModified() || !directoryEntity.isLocal()
+                    || directoryEntity.getRevision().equals(remoteChange.getRevision())){
+
+            }
+
+
+            if (!directoryEntity.isLocked()) {
+                if (remoteChange.isDeleted()){
+                    deleteFile(remoteChange);
+                } else {
+                    addFile(remoteChange);
+                }
+            } else {
+                logger.debug("Skipped synchronizing " + remoteChange.getFullPath() + " from dropbox. Another attempt will be made next time.");
+            }
+
+        } catch (SQLException e) {
+            logger.warn("Failed to synchronize [" + remoteChange.getFullPath() + "] from dropbox", e);
+            return;
+        }
+
 
         String tmpPath = _configuration.getTmpFolderPath() + remoteChange.getEntryName();
         String localPath = _configuration.getDataFolderPath() + remoteChange.getFullPath();

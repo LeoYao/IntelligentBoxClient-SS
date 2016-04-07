@@ -2,13 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="588569fd-a8e5-46ab-862d-17dab1c2609f" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/utils/Consts.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/utils/IUtils.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/utils/Utils.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/NotificationDbContext.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/NotificationDbContext.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/DirectoryEntity.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/DirectoryEntity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/RemoteChangeEntity.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/RemoteChangeEntity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/persistence/DirectoryDbSaver.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/persistence/DirectoryDbSaver.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java" />
     </list>
     <ignored path="IntelligentBoxClient-SS.iws" />
@@ -40,9 +40,11 @@
       <file leaf-file-name="Registrator.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/Registrator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
+            <state relative-caret-position="360">
               <caret line="45" column="9" selection-start-line="45" selection-start-column="9" selection-end-line="45" selection-end-column="9" />
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -50,34 +52,56 @@
       <file leaf-file-name="LocalFileSynchronizer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="188">
+            <state relative-caret-position="1785">
               <caret line="132" column="44" selection-start-line="132" selection-start-column="44" selection-end-line="132" selection-end-column="44" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#5578#5579#0" expanded="true" />
-                <element signature="e#5648#5649#0" expanded="true" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#5578#5579#0" expanded="false" />
+                <element signature="e#5648#5649#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RemoteFileSynchronizer.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="RemoteFileSynchronizer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="93" column="17" selection-start-line="93" selection-start-column="17" selection-end-line="93" selection-end-column="17" />
+            <state relative-caret-position="1560">
+              <caret line="104" column="34" selection-start-line="104" selection-start-column="17" selection-end-line="104" selection-end-column="34" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RemoteChangeEntity.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/RemoteChangeEntity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-185">
+              <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#708#709#0" expanded="true" />
+                <element signature="e#742#743#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DirectoryDbSaver.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/persistence/DirectoryDbSaver.java">
+      <file leaf-file-name="Consts.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/utils/Consts.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="218">
-              <caret line="64" column="54" selection-start-line="64" selection-start-column="54" selection-end-line="64" selection-end-column="54" />
+            <state relative-caret-position="165">
+              <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DirectoryEntity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/DirectoryEntity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="7" column="30" selection-start-line="7" selection-start-column="30" selection-end-line="7" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -86,9 +110,14 @@
       <file leaf-file-name="DirectoryDbContext.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2213">
+            <state relative-caret-position="3375">
               <caret line="236" column="39" selection-start-line="236" selection-start-column="31" selection-end-line="236" selection-end-column="39" />
               <folding>
+                <element signature="imports" expanded="false" />
+                <element signature="e#939#940#0" expanded="false" />
+                <element signature="e#975#976#0" expanded="false" />
+                <element signature="e#1650#1667#0" expanded="false" />
+                <element signature="e#2224#2241#0" expanded="false" />
                 <marker date="1459740924000" expanded="true" signature="5589:6407" placeholder="SELECT full_... " />
                 <marker date="1459740924000" expanded="true" signature="6505:7337" placeholder="SELECT full_... " />
                 <marker date="1459740924000" expanded="true" signature="6505:7397" placeholder="SELECT full_... " />
@@ -102,24 +131,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SynchronizationWorker.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/SynchronizationWorker.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="46" column="9" selection-start-line="46" selection-start-column="9" selection-end-line="46" selection-end-column="9" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="NotificationDbContext.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/NotificationDbContext.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-22">
+            <state relative-caret-position="1695">
               <caret line="125" column="64" selection-start-line="125" selection-start-column="64" selection-end-line="125" selection-end-column="64" />
               <folding>
+                <element signature="imports" expanded="false" />
+                <element signature="e#1093#1094#0" expanded="false" />
+                <element signature="e#1129#1130#0" expanded="false" />
                 <marker date="1459740872000" expanded="true" signature="5202:5239" placeholder="SELECT is_ch... REMOTE_CHANGED" />
                 <marker date="1459740872000" expanded="true" signature="5308:5348" placeholder="UPDATE REMOT... " />
                 <marker date="1459740872000" expanded="true" signature="5415:5455" placeholder="UPDATE REMOT... " />
@@ -150,9 +170,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrap/GlobalConfiguration.java" />
-        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/GlobalConfiguration.java" />
-        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/components/StartListener.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/listeners/StartListener.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/messages/Notification.java" />
         <option value="$PROJECT_DIR$/logback.xml" />
@@ -196,11 +213,14 @@
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dropbox/IDropboxClient.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/NotificationDbContext.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java" />
-        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/DirectoryEntity.java" />
-        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/RemoteChangeEntity.java" />
-        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/persistence/DirectoryDbSaver.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/persistence/DirectoryDbSaver.java" />
+        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/MetadataEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/utils/Utils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/utils/Consts.java" />
+        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/DirectoryEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/RemoteChangeEntity.java" />
       </list>
     </option>
   </component>
@@ -274,20 +294,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="IntelligentBoxClient-SS">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -364,11 +370,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="workers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="synchronizers" />
+              <option name="myItemId" value="utils" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -412,7 +414,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="listeners" />
+              <option name="myItemId" value="dao" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -434,7 +436,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="bootstrapper" />
+              <option name="myItemId" value="dao" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pojo" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -453,10 +459,10 @@
             </PATH_ELEMENT>
           </PATH>
         </subPane>
-        <option name="show-excluded-files" value="false" />
       </pane>
-      <pane id="Scratches" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -470,6 +476,7 @@
   </component>
   <component name="RecentsManager">
     <key name="ExtractSuperBase.RECENT_KEYS">
+      <recent name="intelligentBoxClient.ss.utils" />
       <recent name="intelligentBoxClient.ss.workers.synchronizers" />
       <recent name="intelligentBoxClient.ss.persistence" />
       <recent name="intelligentBoxClient.ss.bootstrapper" />
@@ -580,6 +587,12 @@
       <method />
     </configuration>
     <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
       <method />
     </configuration>
     <configuration default="true" type="js.build_tools.npm" factoryName="npm">
@@ -620,28 +633,28 @@
     <frame x="0" y="23" width="1280" height="773" extended-state="0" />
     <editor active="false" />
     <layout>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32892805" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32599118" sideWeight="0.49676898" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32599118" sideWeight="0.5048465" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10339257" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32892805" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32599118" sideWeight="0.4951535" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22051696" sideWeight="0.49237472" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32892805" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32599118" sideWeight="0.5048465" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10823909" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32796487" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24968234" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22051696" sideWeight="0.5076253" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39941263" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32599118" sideWeight="0.49676898" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32599118" sideWeight="0.4951535" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39941263" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="UnknownFeatures">
@@ -667,19 +680,20 @@
     <MESSAGE value="support deleting file on cloud" />
     <MESSAGE value="extract RemoteFileSynchronizer" />
     <MESSAGE value="synchronize files from local to remote" />
-    <option name="LAST_COMMIT_MESSAGE" value="synchronize files from local to remote" />
+    <MESSAGE value="use revision to avoid unnecessary downloading" />
+    <option name="LAST_COMMIT_MESSAGE" value="use revision to avoid unnecessary downloading" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java</url>
-          <line>150</line>
+          <line>134</line>
           <properties />
           <option name="timeStamp" value="14" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="15" />
+      <option name="time" value="16" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -688,27 +702,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/messages/Notification.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="36" column="21" selection-start-line="36" selection-start-column="21" selection-end-line="36" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/logback.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="29" column="16" selection-start-line="29" selection-start-column="16" selection-end-line="29" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/IRegistrator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -811,34 +804,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1320">
           <caret line="119" column="0" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#1079#1080#0" expanded="false" />
-            <element signature="e#1109#1110#0" expanded="false" />
-            <element signature="e#1156#1157#0" expanded="false" />
-            <element signature="e#1190#1191#0" expanded="false" />
-            <element signature="e#1243#1244#0" expanded="false" />
-            <element signature="e#1270#1271#0" expanded="false" />
-            <element signature="e#1319#1320#0" expanded="false" />
-            <element signature="e#1351#1352#0" expanded="false" />
-            <element signature="e#1409#1410#0" expanded="false" />
-            <element signature="e#1446#1447#0" expanded="false" />
-            <element signature="e#1498#1499#0" expanded="false" />
-            <element signature="e#1537#1538#0" expanded="false" />
-            <element signature="e#1598#1599#0" expanded="false" />
-            <element signature="e#1646#1647#0" expanded="false" />
-            <element signature="e#1698#1699#0" expanded="false" />
-            <element signature="e#1737#1738#0" expanded="false" />
-            <element signature="e#1795#1796#0" expanded="false" />
-            <element signature="e#1858#1859#0" expanded="false" />
-            <element signature="e#1918#1919#0" expanded="false" />
-            <element signature="e#1983#1984#0" expanded="false" />
-            <element signature="e#2044#2045#0" expanded="false" />
-            <element signature="e#2110#2111#0" expanded="false" />
-            <element signature="e#2172#2173#0" expanded="false" />
-            <element signature="e#2239#2240#0" expanded="false" />
-            <marker date="1459464193000" expanded="false" signature="2497:2498" placeholder=" }" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -846,7 +811,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
           <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -854,7 +818,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -862,7 +825,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="309">
           <caret line="259" column="0" selection-start-line="259" selection-start-column="0" selection-end-line="259" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -870,7 +832,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="10" selection-end-column="39" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -878,7 +839,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
           <caret line="27" column="28" selection-start-line="27" selection-start-column="28" selection-end-line="27" selection-end-column="28" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -886,7 +846,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="307">
           <caret line="190" column="0" selection-start-line="190" selection-start-column="0" selection-end-line="190" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -894,7 +853,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="127">
           <caret line="59" column="0" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -902,7 +860,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2422">
           <caret line="228" column="5" selection-start-line="228" selection-start-column="5" selection-end-line="228" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -910,7 +867,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
           <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -918,7 +874,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="615">
           <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -926,15 +881,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="11" column="42" selection-start-line="11" selection-start-column="42" selection-end-line="11" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/application.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="26" selection-start-line="9" selection-start-column="26" selection-end-line="9" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -942,7 +888,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="41" column="18" selection-start-line="41" selection-start-column="18" selection-end-line="41" selection-end-column="18" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -950,7 +895,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="16" column="8" selection-start-line="16" selection-start-column="8" selection-end-line="16" selection-end-column="8" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -958,7 +902,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="416">
           <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -966,15 +909,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
           <caret line="53" column="8" selection-start-line="53" selection-start-column="8" selection-end-line="53" selection-end-column="8" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/Registrator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
+        <state relative-caret-position="360">
           <caret line="45" column="9" selection-start-line="45" selection-start-column="9" selection-end-line="45" selection-end-column="9" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -982,7 +926,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="13" column="61" selection-start-line="13" selection-start-column="61" selection-end-line="13" selection-end-column="61" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -990,7 +933,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="101">
           <caret line="11" column="18" selection-start-line="11" selection-start-column="18" selection-end-line="11" selection-end-column="18" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -998,7 +940,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="21" column="48" selection-start-line="21" selection-start-column="48" selection-end-line="21" selection-end-column="48" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1006,7 +947,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-124">
           <caret line="21" column="4" selection-start-line="21" selection-start-column="4" selection-end-line="21" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1014,9 +954,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="12" column="53" selection-start-line="12" selection-start-column="53" selection-end-line="12" selection-end-column="53" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1024,17 +961,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="266">
           <caret line="127" column="11" selection-start-line="127" selection-start-column="11" selection-end-line="127" selection-end-column="69" />
-          <folding>
-            <element signature="method#getFileMetadatas#0;class#DropboxClient#0" expanded="false" />
-            <element signature="method#getChanges#0;class#DropboxClient#0" expanded="false" />
-            <element signature="method#uploadFile#0;class#DropboxClient#0" expanded="false" />
-            <element signature="method#initAccessToken#0;class#DropboxClient#0" expanded="false" />
-            <element signature="method#loadAccessToken#0;class#DropboxClient#0" expanded="false" />
-            <element signature="method#createAccessToken#0;class#DropboxClient#0" expanded="false" />
-            <element signature="method#initCursor#0;class#DropboxClient#0" expanded="false" />
-            <element signature="method#loadCursor#0;class#DropboxClient#0" expanded="false" />
-            <element signature="method#initClient#0;class#DropboxClient#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1042,15 +968,17 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="21" column="23" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/NotificationDbContext.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-22">
+        <state relative-caret-position="1695">
           <caret line="125" column="64" selection-start-line="125" selection-start-column="64" selection-end-line="125" selection-end-column="64" />
           <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#1093#1094#0" expanded="false" />
+            <element signature="e#1129#1130#0" expanded="false" />
             <marker date="1459740872000" expanded="true" signature="5202:5239" placeholder="SELECT is_ch... REMOTE_CHANGED" />
             <marker date="1459740872000" expanded="true" signature="5308:5348" placeholder="UPDATE REMOT... " />
             <marker date="1459740872000" expanded="true" signature="5415:5455" placeholder="UPDATE REMOT... " />
@@ -1064,19 +992,42 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/persistence/DirectoryDbSaver.java">
+    <entry file="file://$PROJECT_DIR$/target/classes/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="64" column="54" selection-start-line="64" selection-start-column="54" selection-end-line="64" selection-end-column="54" />
-          <folding />
+        <state relative-caret-position="105">
+          <caret line="53" column="31" selection-start-line="53" selection-start-column="31" selection-end-line="53" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1785">
+          <caret line="132" column="44" selection-start-line="132" selection-start-column="44" selection-end-line="132" selection-end-column="44" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#5578#5579#0" expanded="false" />
+            <element signature="e#5648#5649#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/SynchronizationWorker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="46" column="9" selection-start-line="46" selection-start-column="9" selection-end-line="46" selection-end-column="9" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2213">
+        <state relative-caret-position="3375">
           <caret line="236" column="39" selection-start-line="236" selection-start-column="31" selection-end-line="236" selection-end-column="39" />
           <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#939#940#0" expanded="false" />
+            <element signature="e#975#976#0" expanded="false" />
+            <element signature="e#1650#1667#0" expanded="false" />
+            <element signature="e#2224#2241#0" expanded="false" />
             <marker date="1459740924000" expanded="true" signature="5589:6407" placeholder="SELECT full_... " />
             <marker date="1459740924000" expanded="true" signature="6505:7337" placeholder="SELECT full_... " />
             <marker date="1459740924000" expanded="true" signature="6505:7397" placeholder="SELECT full_... " />
@@ -1089,58 +1040,62 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/SynchronizationWorker.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="46" column="9" selection-start-line="46" selection-start-column="9" selection-end-line="46" selection-end-column="9" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="1560">
+          <caret line="104" column="34" selection-start-line="104" selection-start-column="17" selection-end-line="104" selection-end-column="34" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/RemoteChangeEntity.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/persistence/DirectoryDbSaver.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="27" column="74" selection-start-line="27" selection-start-column="74" selection-end-line="27" selection-end-column="74" />
+        <state relative-caret-position="0">
+          <caret line="24" column="4" selection-start-line="24" selection-start-column="4" selection-end-line="24" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/MetadataEntity.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/utils/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="38" selection-start-line="8" selection-start-column="38" selection-end-line="8" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/utils/Consts.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/DirectoryEntity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="141" column="74" selection-start-line="141" selection-start-column="74" selection-end-line="141" selection-end-column="74" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/target/classes/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.class">
-      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
-          <caret line="53" column="31" selection-start-line="53" selection-start-column="31" selection-end-line="53" selection-end-column="31" />
+          <caret line="7" column="30" selection-start-line="7" selection-start-column="30" selection-end-line="7" selection-end-column="30" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java">
+    <entry file="file://$PROJECT_DIR$/config/application.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="132" column="44" selection-start-line="132" selection-start-column="44" selection-end-line="132" selection-end-column="44" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#5578#5579#0" expanded="true" />
-            <element signature="e#5648#5649#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="165">
+          <caret line="11" column="39" selection-start-line="11" selection-start-column="39" selection-end-line="11" selection-end-column="39" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/RemoteChangeEntity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="93" column="17" selection-start-line="93" selection-start-column="17" selection-end-line="93" selection-end-column="17" />
+        <state relative-caret-position="-185">
+          <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#708#709#0" expanded="true" />
+            <element signature="e#742#743#0" expanded="true" />
           </folding>
         </state>
       </provider>

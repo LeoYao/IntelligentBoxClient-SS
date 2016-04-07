@@ -5,6 +5,7 @@ import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.Metadata;
 import intelligentBoxClient.ss.dao.IDirectoryDbContext;
 import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
+import intelligentBoxClient.ss.utils.IUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,13 @@ public class DirectoryDbSaver implements IDirectoryDbSaver {
 
     private IDirectoryDbContext _directoryDbContext;
     private Log logger;
+    private IUtils _utils;
 
     @Autowired
-    public DirectoryDbSaver(IDirectoryDbContext directoryDbContext) {
+    public DirectoryDbSaver(IDirectoryDbContext directoryDbContext, IUtils utils) {
         _directoryDbContext = directoryDbContext;
         logger = LogFactory.getLog(this.getClass());
+        _utils = utils;
     }
 
     public boolean save(FileMetadata metadata) {
@@ -33,7 +36,7 @@ public class DirectoryDbSaver implements IDirectoryDbSaver {
         try {
             String fullPath = metadata.getPathLower();
             String name = metadata.getName().toLowerCase();
-            String parentPath = extractParentFolderPath(fullPath, name);
+            String parentPath = _utils.extractParentFolderPath(fullPath, name);
             inTransaction = _directoryDbContext.beginTransaction();
             DirectoryEntity entity = _directoryDbContext.querySingleFile(fullPath);
             if (entity == null) {
@@ -84,11 +87,15 @@ public class DirectoryDbSaver implements IDirectoryDbSaver {
         try {
             inTransaction = _directoryDbContext.beginTransaction();
             DirectoryEntity entity = _directoryDbContext.querySingleFile(metadata.getPathDisplay());
+            String fullPath = metadata.getPathLower();
+            String name = metadata.getName().toLowerCase();
+            String parentPath = _utils.extractParentFolderPath(fullPath, name);
+
             if (entity == null) {
                 entity = new DirectoryEntity();
-                entity.setFullPath(metadata.getPathDisplay());
-                entity.setEntryName(metadata.getName());
-                entity.setParentFolderFullPath(extractParentFolderPath(metadata.getPathDisplay(), metadata.getName()));
+                entity.setFullPath(fullPath);
+                entity.setEntryName(name);
+                entity.setParentFolderFullPath(parentPath);
                 entity.setType(DirectoryEntity.FOLDER);
                 entity.setSize(0);
                 long now = new Date().getTime();
@@ -100,9 +107,9 @@ public class DirectoryDbSaver implements IDirectoryDbSaver {
 
                 _directoryDbContext.insertFile(entity);
             } else {
-                entity.setFullPath(metadata.getPathDisplay());
-                entity.setEntryName(metadata.getName());
-                entity.setParentFolderFullPath(extractParentFolderPath(metadata.getPathDisplay(), metadata.getName()));
+                entity.setFullPath(fullPath);
+                entity.setEntryName(name);
+                entity.setParentFolderFullPath(parentPath);
                 entity.setType(DirectoryEntity.FOLDER);
                 entity.setSize(0);
                 long now = new Date().getTime();
@@ -124,14 +131,5 @@ public class DirectoryDbSaver implements IDirectoryDbSaver {
         return true;
     }
 
-    private String extractParentFolderPath(String fullPath, String fileName) {
-        int fullPathLength = fullPath.length();
-        int fileNameLength = fileName.length();
-        if (fileNameLength == fullPathLength) {
-            //root
-            return ".";
-        }
-        return fullPath.substring(0, fullPathLength - fileNameLength - 1);
-    }
 }
 
