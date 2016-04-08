@@ -58,21 +58,20 @@ public class RefreshListener implements ApplicationListener<ContextRefreshedEven
         IConfiguration configuration = appCtx.getBean(IConfiguration.class);
 
         try {
-            DirectoryEntity folderEntity = dirDbCtx.querySingleEntry("/testdata");
-            if (folderEntity == null){
+            DirectoryEntity folderEntity = dirDbCtx.querySingleEntry("");
+            if (folderEntity == null) {
                 folderEntity = new DirectoryEntity();
-                folderEntity.setFullPath("/testdata");
-                folderEntity.setParentFolderFullPath("/");
-                folderEntity.setEntryName("testdata");
+                folderEntity.setFullPath("");
+                folderEntity.setParentFolderFullPath(".");
+                folderEntity.setEntryName("");
                 folderEntity.setType(Consts.FOLDER);
                 folderEntity.setMtime(new Timestamp(new Date().getTime()));
                 folderEntity.setAtime(new Timestamp(new Date().getTime()));
                 folderEntity.setLocal(true);
                 dirDbCtx.insertEntry(folderEntity);
             }
-
+/*
             for (int i = 0; i < 3; ++i) {
-
                 String remotePath = "/testdata/test" + i + ".txt";
                 FileMetadata metadata = dbxClient.uploadFile(remotePath, configuration.getDataFolderPath() + "testdata/test" + i + ".txt");
                 DirectoryEntity directoryEntity = dirDbCtx.querySingleEntry(remotePath);
@@ -83,9 +82,9 @@ public class RefreshListener implements ApplicationListener<ContextRefreshedEven
                     directoryEntity = new DirectoryEntity(metadata, directoryEntity);
                     dirDbCtx.updateEntry(directoryEntity);
                 }
-            }
-        } catch (DbxException e) {
-            logger.error(e);
+            }*/
+        //} catch (DbxException e) {
+        //    logger.error(e);
         } catch (SQLException e) {
             logger.error(e);
         }
