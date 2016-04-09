@@ -179,67 +179,6 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     }
 
     @Override
-    public LruEntity queryLru(String curr) throws SQLException {
-        _selectLruStatement.setString(1, curr);
-
-        ResultSet rs = null;
-        LruEntity result = null;
-        try {
-            rs = _selectLruStatement.executeQuery();
-            if (rs.next()){
-                result = new LruEntity();
-                result.setCurr(rs.getString("curr"));
-                result.setPrev(rs.getString("prev"));
-                result.setNext(rs.getString("next"));
-            }
-        }
-        finally {
-            if (rs != null && !rs.isClosed()){
-                rs.close();
-            }
-        }
-
-        return result;
-    }
-
-    @Override
-    public int insertLru(LruEntity entity) throws SQLException {
-        int affectedRowCnt = 0;
-
-        _insertLruStatement.setString(1, entity.getCurr());
-        _insertLruStatement.setString(2, entity.getPrev());
-        _insertLruStatement.setString(3, entity.getNext());
-
-        affectedRowCnt = _insertLruStatement.executeUpdate();
-
-        return affectedRowCnt;
-    }
-
-    @Override
-    public int updateLru(LruEntity entity) throws SQLException {
-        int affectedRowCnt = 0;
-
-        _updateLruStatement.setString(1, entity.getPrev());
-        _updateLruStatement.setString(2, entity.getNext());
-        _updateLruStatement.setString(3, entity.getCurr());
-
-        affectedRowCnt = _updateLruStatement.executeUpdate();
-
-        return affectedRowCnt;
-    }
-
-    @Override
-    public int deleteLru(String curr) throws SQLException {
-        int affectedRowCnt = 0;
-
-        _deleteLruStatement.setString(1, curr);
-
-        affectedRowCnt = _deleteLruStatement.executeUpdate();
-
-        return affectedRowCnt;
-    }
-
-    @Override
     public LruEntity popLru(boolean createTransaction){
         LruEntity result = null;
         boolean inTransaction = false;
@@ -333,6 +272,44 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         }
 
         return result;
+    }
+
+
+    @Override
+    public boolean removeLru(String path, boolean createTransaction){
+        LruEntity toRemove = null;
+        boolean inTransaction = false;
+        boolean inError = true;
+
+        try{
+            if (createTransaction){
+                inTransaction = beginTransaction();
+            }
+            toRemove = queryLru(path);
+            if (toRemove != null) {
+                LruEntity prev = queryLru(toRemove.getPrev());
+                LruEntity next = queryLru(toRemove.getNext());
+                prev.setNext(next.getCurr());
+                next.setPrev(prev.getCurr());
+                updateLru(prev);
+                updateLru(next);
+                deleteLru(toRemove.getCurr());
+            }
+            inError = false;
+        } catch (SQLException e){
+            logger.error("Falied to pop.", e);
+        }
+        finally {
+            if (inTransaction){
+                if(inError){
+                    rollbackTransaction();
+                } else {
+                    commitTransaction();
+                }
+            }
+        }
+
+        return !inError;
 
     }
 
@@ -597,5 +574,63 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
 
         sql = "insert or ignore into lru_queue (curr, prev) values('.tail', '.head');";
         executeSql(sql);
+    }
+
+
+    private LruEntity queryLru(String curr) throws SQLException {
+        _selectLruStatement.setString(1, curr);
+
+        ResultSet rs = null;
+        LruEntity result = null;
+        try {
+            rs = _selectLruStatement.executeQuery();
+            if (rs.next()){
+                result = new LruEntity();
+                result.setCurr(rs.getString("curr"));
+                result.setPrev(rs.getString("prev"));
+                result.setNext(rs.getString("next"));
+            }
+        }
+        finally {
+            if (rs != null && !rs.isClosed()){
+                rs.close();
+            }
+        }
+
+        return result;
+    }
+
+    private int insertLru(LruEntity entity) throws SQLException {
+        int affectedRowCnt = 0;
+
+        _insertLruStatement.setString(1, entity.getCurr());
+        _insertLruStatement.setString(2, entity.getPrev());
+        _insertLruStatement.setString(3, entity.getNext());
+
+        affectedRowCnt = _insertLruStatement.executeUpdate();
+
+        return affectedRowCnt;
+    }
+
+    private int updateLru(LruEntity entity) throws SQLException {
+        int affectedRowCnt = 0;
+
+        _updateLruStatement.setString(1, entity.getPrev());
+        _updateLruStatement.setString(2, entity.getNext());
+        _updateLruStatement.setString(3, entity.getCurr());
+
+        affectedRowCnt = _updateLruStatement.executeUpdate();
+
+        return affectedRowCnt;
+    }
+
+    private int deleteLru(String curr) throws SQLException {
+        int affectedRowCnt = 0;
+
+        _deleteLruStatement.setString(1, curr);
+
+        affectedRowCnt = _deleteLruStatement.executeUpdate();
+
+        return affectedRowCnt;
     }
 }

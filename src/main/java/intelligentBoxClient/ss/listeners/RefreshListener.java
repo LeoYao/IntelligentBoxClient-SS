@@ -51,9 +51,19 @@ public class RefreshListener implements ApplicationListener<ContextRefreshedEven
 
     public void genLru(ApplicationContext appCtx){
         IDirectoryDbContext ctx = appCtx.getBean(IDirectoryDbContext.class);
-        ctx.pushLru("/test0.txt", true);
-        ctx.pushLru("/testdata/test1.txt", true);
-        ctx.pushLru("/testdata/subtestdata/test2.txt", true);
+
+        while(ctx.popLru(true) != null);
+/*
+        ctx.pushLru("a", true);
+        ctx.pushLru("b", true);
+        ctx.pushLru("c", true);
+
+        ctx.removeLru("b", true);
+*/
+
+        ctx.pushLru("/test0.txt", false);
+        ctx.pushLru("/test1.txt", false);
+        ctx.pushLru("/test2.txt", false);
     }
 
 

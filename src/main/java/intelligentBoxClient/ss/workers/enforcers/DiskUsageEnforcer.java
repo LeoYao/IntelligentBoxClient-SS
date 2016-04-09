@@ -2,12 +2,18 @@ package intelligentBoxClient.ss.workers.enforcers;
 
 import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dao.IDirectoryDbContext;
+import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
+import intelligentBoxClient.ss.dao.pojo.LruEntity;
 import intelligentBoxClient.ss.utils.IUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 
 /**
@@ -41,16 +47,34 @@ public class DiskUsageEnforcer implements IDiskUsageEnforcer{
         }
     }
 
+    private boolean cleanLocalFile(String path){
+        try {
+            DirectoryEntity directoryEntity = _directoryDbContext.querySingleEntry(path);
+            if (directoryEntity == null || !directoryEntity.isLocal()){
+                return true;
+            }
+            String filePath = _configuration.getDataFolderPath() + path;
+            Path filePathOutput = Paths.get(filePath);
+
+            Files.deleteIfExists(filePathOutput);
+            _directoryDbContext.deleteEntry(path);
+            logger.debug("Cleaned file [" + path + "]");
+            return true;
+        } catch (SQLException e) {
+            logger.error("Failed to delete [" + path + "].", e);
+            return false;
+        } catch (IOException e) {
+            logger.error("Failed to delete [" + path + "].", e);
+            return false;
+        }
+    }
+
     public void enforce() {
         long maxDiskUsage = _configuration.getMaxLocalSize();
+        long diskUsage;
 
-        boolean toClean = true;
-
-        long diskUsage = Long.MAX_VALUE;
-
-        boolean isError = true;
-
-        while (toClean) {
+        while (true) {
+            boolean isError = true;
             boolean inTransaction = false;
             try {
                 inTransaction = _directoryDbContext.beginTransaction();
@@ -60,10 +84,24 @@ public class DiskUsageEnforcer implements IDiskUsageEnforcer{
                     isError = false;
                     break;
                 }
+
+                //Assumption: If one file is in LRU queue, it must not be in use.
+                LruEntity toClean = _directoryDbContext.popLru(false);
+                if (toClean == null){
+                    logger.warn("No file is in LRU queue.");
+                    break;
+                }
+
+                if (cleanLocalFile(toClean.getCurr())){
+                    logger.error("Failed to delete [" + toClean.getCurr() + "]");
+                    break;
+                }
             } finally {
                 if (inTransaction) {
                     if (isError){
-
+                        _directoryDbContext.rollbackTransaction();
+                    } else {
+                        _directoryDbContext.commitTransaction();
                     }
                 }
             }

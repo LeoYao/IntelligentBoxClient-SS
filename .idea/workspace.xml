@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="588569fd-a8e5-46ab-862d-17dab1c2609f" name="Default" comment="implement LRU">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/IDiskUsageEnforcer.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/persistence/DirectoryDbSaver.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/persistence/IDirectoryDbSaver.java" afterPath="" />
+    <list default="true" id="588569fd-a8e5-46ab-862d-17dab1c2609f" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/LruDbContext.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/application.properties.template" afterPath="$PROJECT_DIR$/config/application.properties.template" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/Bootstrapper.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/Bootstrapper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/Configuration.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/Configuration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/IConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/IConfiguration.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/IDirectoryDbContext.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/IDirectoryDbContext.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/listeners/RefreshListener.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/listeners/RefreshListener.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/SynchronizationWorker.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/SynchronizationWorker.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java" />
     </list>
     <ignored path="IntelligentBoxClient-SS.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -44,8 +39,8 @@
       <file leaf-file-name="DiskUsageEnforcer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="278">
-              <caret line="55" column="57" selection-start-line="55" selection-start-column="57" selection-end-line="55" selection-end-column="57" />
+            <state relative-caret-position="189">
+              <caret line="88" column="60" selection-start-line="88" selection-start-column="60" selection-end-line="88" selection-end-column="60" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -53,11 +48,41 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="SynchronizationWorker.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/SynchronizationWorker.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-60">
+              <caret line="45" column="18" selection-start-line="45" selection-start-column="18" selection-end-line="45" selection-end-column="18" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="application.properties" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/application.properties">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="165">
+              <caret line="11" column="16" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="IDirectoryDbContext.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/IDirectoryDbContext.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="RefreshListener.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/listeners/RefreshListener.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="40" column="23" selection-start-line="40" selection-start-column="23" selection-end-line="40" selection-end-column="23" />
+            <state relative-caret-position="204">
+              <caret line="59" column="0" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -68,20 +93,20 @@
       <file leaf-file-name="DirectoryDbContext.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="217">
-              <caret line="256" column="48" selection-start-line="256" selection-start-column="48" selection-end-line="256" selection-end-column="48" />
+            <state relative-caret-position="3612">
+              <caret line="597" column="9" selection-start-line="597" selection-start-column="9" selection-end-line="597" selection-end-column="9" />
               <folding>
-                <marker date="1460236687000" expanded="true" signature="10862:11680" placeholder="SELECT full_... " />
-                <marker date="1460236687000" expanded="true" signature="11778:12670" placeholder="SELECT full_... " />
-                <marker date="1460236687000" expanded="true" signature="12792:13671" placeholder="SELECT full_... " />
-                <marker date="1460236687000" expanded="true" signature="13795:13988" placeholder="SELECT full_... " />
-                <marker date="1460236687000" expanded="true" signature="14084:14826" placeholder="INSERT INTO directory... " />
-                <marker date="1460236687000" expanded="true" signature="14922:15649" placeholder="UPDATE direc... " />
-                <marker date="1460236687000" expanded="true" signature="15716:15757" placeholder="DELETE FROM " />
-                <marker date="1460236687000" expanded="true" signature="15847:16057" placeholder="SELECT curr\... " />
-                <marker date="1460236687000" expanded="true" signature="16148:16342" placeholder="INSERT INTO lru_queue... " />
-                <marker date="1460236687000" expanded="true" signature="16433:16590" placeholder="UPDATE lru_q... " />
-                <marker date="1460236687000" expanded="true" signature="16660:16696" placeholder="DELETE FROM " />
+                <marker date="1460239985000" expanded="true" signature="10266:11084" placeholder="SELECT full_... " />
+                <marker date="1460239985000" expanded="true" signature="11182:12074" placeholder="SELECT full_... " />
+                <marker date="1460239985000" expanded="true" signature="12196:13075" placeholder="SELECT full_... " />
+                <marker date="1460239985000" expanded="true" signature="13199:13392" placeholder="SELECT full_... " />
+                <marker date="1460239985000" expanded="true" signature="13488:14230" placeholder="INSERT INTO directory... " />
+                <marker date="1460239985000" expanded="true" signature="14326:15053" placeholder="UPDATE direc... " />
+                <marker date="1460239985000" expanded="true" signature="15120:15161" placeholder="DELETE FROM " />
+                <marker date="1460239985000" expanded="true" signature="15251:15461" placeholder="SELECT curr\... " />
+                <marker date="1460239985000" expanded="true" signature="15552:15746" placeholder="INSERT INTO lru_queue... " />
+                <marker date="1460239985000" expanded="true" signature="15837:15994" placeholder="UPDATE lru_q... " />
+                <marker date="1460239985000" expanded="true" signature="16064:16100" placeholder="DELETE FROM " />
               </folding>
             </state>
           </provider>
@@ -131,7 +156,6 @@
         <option value="$MAVEN_REPOSITORY$/org/springframework/spring-context/4.2.5.RELEASE/spring-context-4.2.5.RELEASE.jar!/org/springframework/context/support/AbstractApplicationContext.class" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dropbox/utils/Upload.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/IRemoteFileSynchronizer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/SynchronizationWorker.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/MetadataEntity.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/utils/Consts.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/persistence/DirectoryDbSaver.java" />
@@ -156,13 +180,14 @@
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/Configuration.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/IConfiguration.java" />
         <option value="$PROJECT_DIR$/config/application.properties.template" />
-        <option value="$PROJECT_DIR$/config/application.properties" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/LruDbContext.java" />
+        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/Bootstrapper.java" />
+        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/IDirectoryDbContext.java" />
-        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/Bootstrapper.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java" />
-        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java" />
+        <option value="$PROJECT_DIR$/config/application.properties" />
+        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/SynchronizationWorker.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/listeners/RefreshListener.java" />
       </list>
     </option>
@@ -601,8 +626,8 @@
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32599118" sideWeight="0.5048465" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.110662356" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32599118" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32452276" sideWeight="0.4951535" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32599118" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32452276" sideWeight="0.4951535" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2197092" sideWeight="0.49237472" order="0" side_tool="false" content_ui="combo" />
@@ -649,7 +674,8 @@
     <MESSAGE value="deal with root folder" />
     <MESSAGE value="implement LRU" />
     <MESSAGE value="create index on is_local" />
-    <option name="LAST_COMMIT_MESSAGE" value="create index on is_local" />
+    <MESSAGE value="merge LRU into DirectoryDbContext" />
+    <option name="LAST_COMMIT_MESSAGE" value="merge LRU into DirectoryDbContext" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -931,14 +957,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/SynchronizationWorker.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="25" column="56" selection-start-line="25" selection-start-column="56" selection-end-line="25" selection-end-column="56" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/ISqliteContext.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
@@ -958,26 +976,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/application.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="37" selection-start-line="9" selection-start-column="37" selection-end-line="9" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/application.properties.template">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/Configuration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="124" column="33" selection-start-line="124" selection-start-column="11" selection-end-line="124" selection-end-column="33" />
           <folding />
         </state>
       </provider>
@@ -996,9 +998,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1320">
           <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1046,16 +1046,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="55" column="57" selection-start-line="55" selection-start-column="57" selection-end-line="55" selection-end-column="57" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot/1.3.3.RELEASE/spring-boot-1.3.3.RELEASE.jar!/org/springframework/boot/context/embedded/EmbeddedWebApplicationContext.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="142">
@@ -1080,34 +1070,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="256" column="48" selection-start-line="256" selection-start-column="48" selection-end-line="256" selection-end-column="48" />
-          <folding>
-            <marker date="1460236687000" expanded="true" signature="10862:11680" placeholder="SELECT full_... " />
-            <marker date="1460236687000" expanded="true" signature="11778:12670" placeholder="SELECT full_... " />
-            <marker date="1460236687000" expanded="true" signature="12792:13671" placeholder="SELECT full_... " />
-            <marker date="1460236687000" expanded="true" signature="13795:13988" placeholder="SELECT full_... " />
-            <marker date="1460236687000" expanded="true" signature="14084:14826" placeholder="INSERT INTO directory... " />
-            <marker date="1460236687000" expanded="true" signature="14922:15649" placeholder="UPDATE direc... " />
-            <marker date="1460236687000" expanded="true" signature="15716:15757" placeholder="DELETE FROM " />
-            <marker date="1460236687000" expanded="true" signature="15847:16057" placeholder="SELECT curr\... " />
-            <marker date="1460236687000" expanded="true" signature="16148:16342" placeholder="INSERT INTO lru_queue... " />
-            <marker date="1460236687000" expanded="true" signature="16433:16590" placeholder="UPDATE lru_q... " />
-            <marker date="1460236687000" expanded="true" signature="16660:16696" placeholder="DELETE FROM " />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/IDirectoryDbContext.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="25" column="60" selection-start-line="25" selection-start-column="60" selection-end-line="25" selection-end-column="60" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
@@ -1116,10 +1078,75 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/bootstrapper/Configuration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="338">
+          <caret line="115" column="35" selection-start-line="115" selection-start-column="18" selection-end-line="115" selection-end-column="35" />
+          <folding>
+            <element signature="e#1861#1862#0" expanded="true" />
+            <element signature="e#1924#1925#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/IDirectoryDbContext.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/application.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="16" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="88" column="60" selection-start-line="88" selection-start-column="60" selection-end-line="88" selection-end-column="60" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3612">
+          <caret line="597" column="9" selection-start-line="597" selection-start-column="9" selection-end-line="597" selection-end-column="9" />
+          <folding>
+            <marker date="1460239985000" expanded="true" signature="10266:11084" placeholder="SELECT full_... " />
+            <marker date="1460239985000" expanded="true" signature="11182:12074" placeholder="SELECT full_... " />
+            <marker date="1460239985000" expanded="true" signature="12196:13075" placeholder="SELECT full_... " />
+            <marker date="1460239985000" expanded="true" signature="13199:13392" placeholder="SELECT full_... " />
+            <marker date="1460239985000" expanded="true" signature="13488:14230" placeholder="INSERT INTO directory... " />
+            <marker date="1460239985000" expanded="true" signature="14326:15053" placeholder="UPDATE direc... " />
+            <marker date="1460239985000" expanded="true" signature="15120:15161" placeholder="DELETE FROM " />
+            <marker date="1460239985000" expanded="true" signature="15251:15461" placeholder="SELECT curr\... " />
+            <marker date="1460239985000" expanded="true" signature="15552:15746" placeholder="INSERT INTO lru_queue... " />
+            <marker date="1460239985000" expanded="true" signature="15837:15994" placeholder="UPDATE lru_q... " />
+            <marker date="1460239985000" expanded="true" signature="16064:16100" placeholder="DELETE FROM " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/SynchronizationWorker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-60">
+          <caret line="45" column="18" selection-start-line="45" selection-start-column="18" selection-end-line="45" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/listeners/RefreshListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="40" column="23" selection-start-line="40" selection-start-column="23" selection-end-line="40" selection-end-column="23" />
+        <state relative-caret-position="204">
+          <caret line="59" column="0" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

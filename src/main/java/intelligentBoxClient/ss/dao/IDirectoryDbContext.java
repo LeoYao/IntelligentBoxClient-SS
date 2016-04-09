@@ -18,10 +18,7 @@ public interface IDirectoryDbContext extends ISqliteContext {
     int insertEntry(DirectoryEntity entry) throws SQLException;
     int deleteEntry(String fullPath) throws SQLException;
 
-    LruEntity queryLru(String path) throws SQLException;
-    int insertLru(LruEntity entity) throws SQLException;
-    int updateLru(LruEntity entity) throws SQLException;
-    int deleteLru(String path) throws SQLException;
     LruEntity popLru(boolean createTransaction);
     LruEntity pushLru(String path, boolean createTransaction);
+    boolean removeLru(String path, boolean createTransaction);
 }
