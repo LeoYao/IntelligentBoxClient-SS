@@ -339,8 +339,8 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                 "on DIRECTORY (is_modified);";
         executeSql(sql);
 
-        sql = "create index if not exists IDX_ATIME\n" +
-                "on DIRECTORY (atime);";
+        sql = "create index if not exists IDX_IS_LOCAL\n" +
+                "on DIRECTORY (is_local);";
         executeSql(sql);
     }
 
