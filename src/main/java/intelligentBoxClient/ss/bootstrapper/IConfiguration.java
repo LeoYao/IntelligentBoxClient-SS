@@ -33,4 +33,6 @@ public interface IConfiguration {
     String getMetadataFolderPath();
 
     String getTmpFolderPath();
+
+    long getMaxLocalSize();
 }

@@ -2,7 +2,6 @@ package intelligentBoxClient.ss.bootstrapper;
 
 import intelligentBoxClient.ss.dao.IDirectoryDbContext;
 import intelligentBoxClient.ss.dao.INotificationDbContext;
-import intelligentBoxClient.ss.dropbox.DropboxClient;
 import intelligentBoxClient.ss.dropbox.IDropboxClient;
 import intelligentBoxClient.ss.workers.ISynchronizationWorker;
 import org.springframework.beans.factory.annotation.Autowired;

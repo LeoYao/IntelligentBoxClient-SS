@@ -1,7 +1,5 @@
 package intelligentBoxClient.ss.listeners;
 
-import com.dropbox.core.DbxException;
-import com.dropbox.core.v2.files.FileMetadata;
 import intelligentBoxClient.ss.bootstrapper.Bootstrapper;
 import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dao.IDirectoryDbContext;
@@ -40,6 +38,7 @@ public class RefreshListener implements ApplicationListener<ContextRefreshedEven
         }
 
         genData(appCtx);
+        genLru(appCtx);
     }
 
     class AbortExitCodeGenerator implements ExitCodeGenerator
@@ -49,6 +48,14 @@ public class RefreshListener implements ApplicationListener<ContextRefreshedEven
             return -1;
         }
     }
+
+    public void genLru(ApplicationContext appCtx){
+        IDirectoryDbContext ctx = appCtx.getBean(IDirectoryDbContext.class);
+        ctx.pushLru("/test0.txt", true);
+        ctx.pushLru("/testdata/test1.txt", true);
+        ctx.pushLru("/testdata/subtestdata/test2.txt", true);
+    }
+
 
     public void genData(ApplicationContext appCtx){
         IDropboxClient dbxClient = appCtx.getBean(IDropboxClient.class);
