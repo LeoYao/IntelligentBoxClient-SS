@@ -1,0 +1,3 @@
+1. put application.properties into working folder
+2. put logback.xml into work folder
+3. run java -cp ./ss-1.0-SNAPSHOT.jar:. org.springframework.boot.loader.JarLauncher
