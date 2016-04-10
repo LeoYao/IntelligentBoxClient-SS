@@ -90,7 +90,7 @@ public class DiskUsageEnforcer implements IDiskUsageEnforcer{
                 //Assumption: If one file is in LRU queue, it must not be in use.
                 LruEntity toClean = _directoryDbContext.popLru(false);
                 if (toClean == null){
-                    logger.warn("No file is in LRU queue.");
+                    logger.warn("No file is in LRU queue. Perhaps all local files are in use.");
                     break;
                 }
 
