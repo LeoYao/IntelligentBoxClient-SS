@@ -49,6 +49,7 @@ public class DiskUsageEnforcer implements IDiskUsageEnforcer{
 
     private boolean cleanLocalFile(String path){
         try {
+            logger.debug("Cleaning file [" + path + "]");
             DirectoryEntity directoryEntity = _directoryDbContext.querySingleEntry(path);
             if (directoryEntity == null || !directoryEntity.isLocal()){
                 return true;
@@ -57,14 +58,15 @@ public class DiskUsageEnforcer implements IDiskUsageEnforcer{
             Path filePathOutput = Paths.get(filePath);
 
             Files.deleteIfExists(filePathOutput);
-            _directoryDbContext.deleteEntry(path);
+            directoryEntity.setLocal(false);
+            _directoryDbContext.updateEntry(directoryEntity);
             logger.debug("Cleaned file [" + path + "]");
             return true;
         } catch (SQLException e) {
-            logger.error("Failed to delete [" + path + "].", e);
+            logger.error("Failed to clean [" + path + "].", e);
             return false;
         } catch (IOException e) {
-            logger.error("Failed to delete [" + path + "].", e);
+            logger.error("Failed to clean [" + path + "].", e);
             return false;
         }
     }
@@ -92,10 +94,12 @@ public class DiskUsageEnforcer implements IDiskUsageEnforcer{
                     break;
                 }
 
-                if (cleanLocalFile(toClean.getCurr())){
+                if (!cleanLocalFile(toClean.getCurr())){
                     logger.error("Failed to delete [" + toClean.getCurr() + "]");
                     break;
                 }
+
+                isError = false;
             } finally {
                 if (inTransaction) {
                     if (isError){

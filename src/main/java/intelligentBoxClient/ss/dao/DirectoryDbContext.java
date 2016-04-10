@@ -41,7 +41,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     }
 
     @Override
-    public DirectoryEntity querySingleEntry(String fullPath) throws SQLException {
+    public synchronized DirectoryEntity querySingleEntry(String fullPath) throws SQLException {
         DirectoryEntity result = null;
         ResultSet rs = null;
 
@@ -62,7 +62,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     }
 
     @Override
-    public List<DirectoryEntity> queryEntries(String parentFolderFullPath) throws SQLException {
+    public synchronized List<DirectoryEntity> queryEntries(String parentFolderFullPath) throws SQLException {
         List<DirectoryEntity> results = new LinkedList<DirectoryEntity>();
         ResultSet rs = null;
 
@@ -82,7 +82,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     }
 
     @Override
-    public List<DirectoryEntity> queryChangedEntries() throws SQLException {
+    public synchronized List<DirectoryEntity> queryChangedEntries() throws SQLException {
         List<DirectoryEntity> results = new LinkedList<DirectoryEntity>();
         ResultSet rs = null;
 
@@ -101,7 +101,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     }
 
     @Override
-    public long queryDiskUsage() throws SQLException{
+    public synchronized long queryDiskUsage() throws SQLException{
         long result = 0;
         ResultSet rs = null;
 
@@ -120,7 +120,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     }
 
     @Override
-    public int updateEntry(DirectoryEntity entity) throws SQLException {
+    public synchronized int updateEntry(DirectoryEntity entity) throws SQLException {
         int affectedRowCnt = 0;
 
         _updateStatement.setString(1, entity.getParentFolderFullPath());
@@ -143,7 +143,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     }
 
     @Override
-    public int insertEntry(DirectoryEntity entity) throws SQLException {
+    public synchronized int insertEntry(DirectoryEntity entity) throws SQLException {
         int affectedRowCnt = 0;
 
         _insertStatement.setString(1, entity.getFullPath());
@@ -169,7 +169,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     }
 
     @Override
-    public int deleteEntry(String fullPath) throws SQLException {
+    public synchronized int deleteEntry(String fullPath) throws SQLException {
         int affectedRowCnt = 0;
 
         _deleteStatement.setString(1, fullPath);
@@ -179,7 +179,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     }
 
     @Override
-    public LruEntity popLru(boolean createTransaction){
+    public synchronized LruEntity popLru(boolean createTransaction){
         LruEntity result = null;
         boolean inTransaction = false;
         boolean inError = true;
@@ -220,7 +220,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     }
 
     @Override
-    public LruEntity pushLru(String path, boolean createTransaction) {
+    public synchronized LruEntity pushLru(String path, boolean createTransaction) {
         LruEntity result = null;
         boolean inTransaction = false;
         boolean inError = true;
@@ -276,7 +276,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
 
 
     @Override
-    public boolean removeLru(String path, boolean createTransaction){
+    public synchronized boolean removeLru(String path, boolean createTransaction){
         LruEntity toRemove = null;
         boolean inTransaction = false;
         boolean inError = true;

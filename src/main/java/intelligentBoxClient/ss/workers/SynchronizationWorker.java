@@ -43,7 +43,7 @@ public class SynchronizationWorker implements Runnable, ISynchronizationWorker {
             while (true) {
                 _remoteFileSynchronizer.synchronize();
                 _localFileSynchronizer.synchronize();
-                //_diskUsageEnforcer.enforce();
+                _diskUsageEnforcer.enforce();
                 _dropboxClient.save();
                 Thread.sleep(1000);
             }
