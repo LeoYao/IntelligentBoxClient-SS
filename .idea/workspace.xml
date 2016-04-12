@@ -2,19 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="588569fd-a8e5-46ab-862d-17dab1c2609f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dropbox/utils/CreateFolder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dropbox/utils/Deleter.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dropbox/utils/Deleter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/persistence/DirectoryDbSaver.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/persistence/DirectoryDbSaver.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dropbox/DropboxClient.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dropbox/DropboxClient.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/FileSynchronizer.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/FileSynchronizer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/IDirectoryDbContext.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/IDirectoryDbContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dropbox/IDropboxClient.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dropbox/IDropboxClient.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/listeners/RefreshListener.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/listeners/RefreshListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/RemoteChangeEntity.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/pojo/RemoteChangeEntity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/SynchronizationService.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/SynchronizationService.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="IntelligentBoxClient-SS.iws" />
@@ -703,6 +690,7 @@
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
+    <property name="FullScreen" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -992,7 +980,7 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.10927573" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3272727" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32513368" sideWeight="0.4951535" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32513368" sideWeight="0.4951535" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22045743" sideWeight="0.49237472" order="0" side_tool="false" content_ui="combo" />
@@ -1035,7 +1023,8 @@
     <MESSAGE value="use revision to avoid unnecessary downloading" />
     <MESSAGE value="synchronize metadata even if files are not local but parent folder is local" />
     <MESSAGE value="delete metadata even if files are not local" />
-    <option name="LAST_COMMIT_MESSAGE" value="delete metadata even if files are not local" />
+    <MESSAGE value="synchronize local changes on folders" />
+    <option name="LAST_COMMIT_MESSAGE" value="synchronize local changes on folders" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
