@@ -9,3 +9,4 @@ db_retry_interval=50
 dropbox_call_retry_times=3
 dropbox_token_file_name=dbx_token.txt
 dropbox_cursor_file_name=dbx_cursor.txt
+max_local_size=5000

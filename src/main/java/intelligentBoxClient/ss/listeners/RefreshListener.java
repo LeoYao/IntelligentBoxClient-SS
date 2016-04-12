@@ -1,7 +1,5 @@
 package intelligentBoxClient.ss.listeners;
 
-import com.dropbox.core.DbxException;
-import com.dropbox.core.v2.files.FileMetadata;
 import intelligentBoxClient.ss.bootstrapper.Bootstrapper;
 import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dao.IDirectoryDbContext;
@@ -39,7 +37,6 @@ public class RefreshListener implements ApplicationListener<ContextRefreshedEven
             SpringApplication.exit(appCtx, new AbortExitCodeGenerator());
         }
 
-        genData(appCtx);
     }
 
     class AbortExitCodeGenerator implements ExitCodeGenerator
@@ -47,47 +44,6 @@ public class RefreshListener implements ApplicationListener<ContextRefreshedEven
         @Override
         public int getExitCode() {
             return -1;
-        }
-    }
-
-    public void genData(ApplicationContext appCtx){
-        IDropboxClient dbxClient = appCtx.getBean(IDropboxClient.class);
-
-        IDirectoryDbContext dirDbCtx = appCtx.getBean(IDirectoryDbContext.class);
-
-        IConfiguration configuration = appCtx.getBean(IConfiguration.class);
-
-        try {
-            DirectoryEntity folderEntity = dirDbCtx.querySingleEntry("/testdata");
-            if (folderEntity == null){
-                folderEntity = new DirectoryEntity();
-                folderEntity.setFullPath("/testdata");
-                folderEntity.setParentFolderFullPath("/");
-                folderEntity.setEntryName("testdata");
-                folderEntity.setType(Consts.FOLDER);
-                folderEntity.setMtime(new Timestamp(new Date().getTime()));
-                folderEntity.setAtime(new Timestamp(new Date().getTime()));
-                folderEntity.setLocal(true);
-                dirDbCtx.insertEntry(folderEntity);
-            }
-
-            for (int i = 0; i < 3; ++i) {
-
-                String remotePath = "/testdata/test" + i + ".txt";
-                FileMetadata metadata = dbxClient.uploadFile(remotePath, configuration.getDataFolderPath() + "testdata/test" + i + ".txt");
-                DirectoryEntity directoryEntity = dirDbCtx.querySingleEntry(remotePath);
-                if (directoryEntity == null) {
-                    directoryEntity = new DirectoryEntity(metadata);
-                    dirDbCtx.insertEntry(directoryEntity);
-                } else {
-                    directoryEntity = new DirectoryEntity(metadata, directoryEntity);
-                    dirDbCtx.updateEntry(directoryEntity);
-                }
-            }
-        } catch (DbxException e) {
-            logger.error(e);
-        } catch (SQLException e) {
-            logger.error(e);
         }
     }
 }

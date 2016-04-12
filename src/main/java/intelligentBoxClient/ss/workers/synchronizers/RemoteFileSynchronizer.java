@@ -143,9 +143,10 @@ public class RemoteFileSynchronizer extends FileSynchronizer {
             String parentPath = _utils.extractParentFolderPath(remoteChange.getFullPath(), remoteChange.getEntryName());
             inTransaction = _directoryDbContext.beginTransaction();
             isNotifInTransaction = _notificationDbContext.beginTransaction();
+
             DirectoryEntity parentDirectoryEntity = _directoryDbContext.querySingleEntry(parentPath);
 
-            if (parentDirectoryEntity == null || !parentDirectoryEntity.isLocal()){
+            if (parentDirectoryEntity == null || !parentDirectoryEntity.isLocal()) {
                 //No need to synchronize file if its parent folder is not local
                 _notificationDbContext.deletePendingRemoteChanges(remoteChange.getFullPath());
                 logger.debug("Skipped adding [" + remoteChange.getFullPath() + "], because parent folder is not local.");

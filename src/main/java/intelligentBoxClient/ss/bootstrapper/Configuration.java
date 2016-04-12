@@ -42,6 +42,10 @@ public class Configuration implements IConfiguration {
     @Value("${db_retry_interval}")
     private int _dbRetryInterval;
 
+    @Value("${max_local_size}")
+    private long _maxLocalSize;
+
+
     @Override
     public String getCnsUrl(){
         return _cnsUrl;
@@ -116,4 +120,7 @@ public class Configuration implements IConfiguration {
 
     @Override
     public String getTmpFolderPath() { return _rootPath + "tmp/";}
+
+    @Override
+    public long getMaxLocalSize(){ return _maxLocalSize; }
 }

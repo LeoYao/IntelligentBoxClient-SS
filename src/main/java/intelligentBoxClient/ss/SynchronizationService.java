@@ -50,7 +50,6 @@ public class SynchronizationService {
 
     public static void testRest()
     {
-
         RestTemplate restTemplate = new RestTemplate();
         RegistrationRequest request = new RegistrationRequest();
         request.setAccountId("id1");
@@ -68,18 +67,6 @@ public class SynchronizationService {
         DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
         FullAccount account = client.users().getCurrentAccount();
         System.out.println(account.getAccountId());
-
-        // Upload "test.txt" to Dropbox
-        try (InputStream in = new FileInputStream("test.txt")) {
-            FileMetadata metadata = client.files().uploadBuilder("/test1/test.txt")
-                    .withMode(WriteMode.OVERWRITE)
-                    .uploadAndFinish(in);
-        }
-
-        ListFolderGetLatestCursorResult cursorResult =
-                client.files().listFolderGetLatestCursorBuilder("").withRecursive(true).withIncludeDeleted(true).start();
-
-        String cursor = cursorResult.getCursor();
 
         // Get files and folder metadata from Dropbox root directory
         boolean first = true;
@@ -107,32 +94,6 @@ public class SynchronizationService {
             }
         }
 
-        client.files().delete("/test1/test.txt");
-        System.out.println();
-        first = true;
-        listFolderResult = client.files().listFolderContinue(cursor);
-        while (first || listFolderResult.getHasMore()) {
-            for (Metadata metadata : listFolderResult.getEntries()) {
-                first = false;
-                if (metadata instanceof FolderMetadata) {
-                    FolderMetadata folderMetadata = (FolderMetadata) metadata;
-                    System.out.print(folderMetadata.getPathDisplay());
-                    //System.out.println("\t" + folderMetadata.());
-                } else if (metadata instanceof FileMetadata) {
-                    FileMetadata fileMetadata = (FileMetadata) metadata;
-
-                    System.out.print(fileMetadata.getPathDisplay());
-                    System.out.print("\t" + fileMetadata.getRev());
-                } else if (metadata instanceof DeletedMetadata) {
-                    DeletedMetadata deletedMetadata = (DeletedMetadata) metadata;
-
-                    System.out.print(deletedMetadata.getPathDisplay());
-                    System.out.print("\tdeleted");
-                }
-
-                System.out.println();
-            }
-        }
     }
 
     public static void authorize() throws IOException {

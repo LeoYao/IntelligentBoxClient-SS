@@ -1,6 +1,7 @@
 package intelligentBoxClient.ss.workers;
 
 import intelligentBoxClient.ss.dropbox.IDropboxClient;
+import intelligentBoxClient.ss.workers.enforcers.IDiskUsageEnforcer;
 import intelligentBoxClient.ss.workers.synchronizers.IFileSynchronizer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,16 +21,19 @@ public class SynchronizationWorker implements Runnable, ISynchronizationWorker {
     private IDropboxClient _dropboxClient;
     private IFileSynchronizer _remoteFileSynchronizer;
     private IFileSynchronizer _localFileSynchronizer;
+    private IDiskUsageEnforcer _diskUsageEnforcer;
 
 
     @Autowired
     public SynchronizationWorker(IDropboxClient dropboxClient,
                                  @Qualifier("RemoteFileSynchronizer") IFileSynchronizer remoteFileSynchronizer,
-                                 @Qualifier("LocalFileSynchronizer") IFileSynchronizer localFileSynchronizer){
+                                 @Qualifier("LocalFileSynchronizer") IFileSynchronizer localFileSynchronizer,
+                                 IDiskUsageEnforcer diskUsageEnforcer){
         _dropboxClient = dropboxClient;
 
         _remoteFileSynchronizer = remoteFileSynchronizer;
         _localFileSynchronizer = localFileSynchronizer;
+        _diskUsageEnforcer = diskUsageEnforcer;
     }
 
     @Override
@@ -39,6 +43,7 @@ public class SynchronizationWorker implements Runnable, ISynchronizationWorker {
             while (true) {
                 _remoteFileSynchronizer.synchronize();
                 _localFileSynchronizer.synchronize();
+                _diskUsageEnforcer.enforce();
                 _dropboxClient.save();
                 Thread.sleep(1000);
             }

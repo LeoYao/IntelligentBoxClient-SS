@@ -2,6 +2,7 @@ package intelligentBoxClient.ss.dao;
 
 import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
+import intelligentBoxClient.ss.dao.pojo.LruEntity;
 import intelligentBoxClient.ss.utils.Consts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -18,19 +19,29 @@ import java.util.List;
 @Repository
 public class DirectoryDbContext extends SqliteContext implements IDirectoryDbContext {
 
+    public static final String HEAD = ".head";
+    public static final String TAIL = ".tail";
+
     private PreparedStatement _queryFileStatement;
     private PreparedStatement _traverseDirectoryStatement;
     private PreparedStatement _insertStatement;
     private PreparedStatement _updateStatement;
     private PreparedStatement _queryChangesStatement;
     private PreparedStatement _deleteStatement;
+    private PreparedStatement _queryDiskUsageStatement;
+
+    private PreparedStatement _selectLruStatement;
+    private PreparedStatement _updateLruStatement;
+    private PreparedStatement _insertLruStatement;
+    private PreparedStatement _deleteLruStatement;
 
     @Autowired
     public DirectoryDbContext(IConfiguration configuration){
         super(configuration);
     }
 
-    public DirectoryEntity querySingleEntry(String fullPath) throws SQLException {
+    @Override
+    public synchronized DirectoryEntity querySingleEntry(String fullPath) throws SQLException {
         DirectoryEntity result = null;
         ResultSet rs = null;
 
@@ -50,7 +61,8 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         return result;
     }
 
-    public List<DirectoryEntity> queryEntries(String parentFolderFullPath) throws SQLException {
+    @Override
+    public synchronized List<DirectoryEntity> queryEntries(String parentFolderFullPath) throws SQLException {
         List<DirectoryEntity> results = new LinkedList<DirectoryEntity>();
         ResultSet rs = null;
 
@@ -69,7 +81,8 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         return results;
     }
 
-    public List<DirectoryEntity> queryChangedEntries() throws SQLException {
+    @Override
+    public synchronized List<DirectoryEntity> queryChangedEntries() throws SQLException {
         List<DirectoryEntity> results = new LinkedList<DirectoryEntity>();
         ResultSet rs = null;
 
@@ -87,7 +100,27 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         return results;
     }
 
-    public int updateEntry(DirectoryEntity entity) throws SQLException {
+    @Override
+    public synchronized long queryDiskUsage() throws SQLException{
+        long result = 0;
+        ResultSet rs = null;
+
+        try{
+            rs = _queryDiskUsageStatement.executeQuery();
+            if (rs.next()){
+                result = rs.getLong(1);
+            }
+        } finally {
+            if (rs != null && !rs.isClosed()) {
+                rs.close();
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public synchronized int updateEntry(DirectoryEntity entity) throws SQLException {
         int affectedRowCnt = 0;
 
         _updateStatement.setString(1, entity.getParentFolderFullPath());
@@ -109,7 +142,8 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         return affectedRowCnt;
     }
 
-    public int insertEntry(DirectoryEntity entity) throws SQLException {
+    @Override
+    public synchronized int insertEntry(DirectoryEntity entity) throws SQLException {
         int affectedRowCnt = 0;
 
         _insertStatement.setString(1, entity.getFullPath());
@@ -134,13 +168,149 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         return affectedRowCnt;
     }
 
-    public int deleteEntry(String fullPath) throws SQLException {
+    @Override
+    public synchronized int deleteEntry(String fullPath) throws SQLException {
         int affectedRowCnt = 0;
 
         _deleteStatement.setString(1, fullPath);
         affectedRowCnt = _deleteStatement.executeUpdate();
 
         return affectedRowCnt;
+    }
+
+    @Override
+    public synchronized LruEntity popLru(boolean createTransaction){
+        LruEntity result = null;
+        boolean inTransaction = false;
+        boolean inError = true;
+        try {
+            if (createTransaction) {
+                inTransaction = beginTransaction();
+            }
+
+            LruEntity header = queryLru(HEAD);
+            if (header == null || header.getNext().equals(TAIL)) {
+                return null;
+            }
+
+            result = queryLru(header.getNext());
+            header.setNext(result.getNext());
+            LruEntity next = queryLru(result.getNext());
+            next.setPrev(HEAD);
+
+            updateLru(header);
+            updateLru(next);
+            deleteLru(result.getCurr());
+            inError = false;
+        } catch (SQLException e){
+            logger.error("Falied to pop.", e);
+            result = null;
+        }
+        finally {
+            if (inTransaction){
+                if(inError){
+                    rollbackTransaction();
+                } else {
+                    commitTransaction();
+                }
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public synchronized LruEntity pushLru(String path, boolean createTransaction) {
+        LruEntity result = null;
+        boolean inTransaction = false;
+        boolean inError = true;
+
+        try{
+            if (createTransaction) {
+                inTransaction = beginTransaction();
+            }
+
+            result = queryLru(path);
+            if (result == null){
+                result = new LruEntity();
+                result.setCurr(path);
+                insertLru(result);
+            } else {
+                LruEntity prev = queryLru(result.getPrev());
+                LruEntity next = queryLru(result.getNext());
+                prev.setNext(next.getCurr());
+                next.setPrev(prev.getCurr());
+                updateLru(prev);
+                updateLru(next);
+            }
+
+            LruEntity tail = queryLru(TAIL);
+            LruEntity prevTail = queryLru(tail.getPrev());
+            result.setNext(TAIL);
+            result.setPrev(prevTail.getCurr());
+            tail.setPrev(result.getCurr());
+            prevTail.setNext(result.getCurr());
+
+            updateLru(result);
+            updateLru(tail);
+            updateLru(prevTail);
+
+            inError = false;
+
+        } catch (SQLException e){
+            logger.error("Falied to pop.", e);
+            result = null;
+        }
+        finally {
+            if (inTransaction){
+                if(inError){
+                    rollbackTransaction();
+                } else {
+                    commitTransaction();
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public synchronized boolean removeLru(String path, boolean createTransaction){
+        LruEntity toRemove = null;
+        boolean inTransaction = false;
+        boolean inError = true;
+
+        try{
+            if (createTransaction){
+                inTransaction = beginTransaction();
+            }
+            toRemove = queryLru(path);
+            if (toRemove != null) {
+                LruEntity prev = queryLru(toRemove.getPrev());
+                LruEntity next = queryLru(toRemove.getNext());
+                prev.setNext(next.getCurr());
+                next.setPrev(prev.getCurr());
+                updateLru(prev);
+                updateLru(next);
+                deleteLru(toRemove.getCurr());
+            }
+            inError = false;
+        } catch (SQLException e){
+            logger.error("Falied to pop.", e);
+        }
+        finally {
+            if (inTransaction){
+                if(inError){
+                    rollbackTransaction();
+                } else {
+                    commitTransaction();
+                }
+            }
+        }
+
+        return !inError;
+
     }
 
     @Override
@@ -185,7 +355,8 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             "  ORDER BY full_path ASC;");
 
             _queryChangesStatement =
-                    _connection.prepareStatement("SELECT   full_path\n" +
+                    _connection.prepareStatement(
+                            "SELECT   full_path\n" +
                             "       , parent_folder_full_path\n" +
                             "       , entry_name\n" +
                             "       , old_full_path\n" +
@@ -203,8 +374,15 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             " WHERE is_modified = 1\n" +
                             " ORDER BY full_path DESC;");
 
-            _insertStatement = _connection.prepareStatement
-                    ("INSERT INTO directory\n" +
+            _queryDiskUsageStatement =
+                    _connection.prepareStatement(
+                            "SELECT SUM(size)\n" +
+                            "  FROM directory\n" +
+                            " WHERE is_local = 1 AND type = 2\n" +
+                            " ORDER BY full_path DESC;");
+
+            _insertStatement = _connection.prepareStatement(
+                            "INSERT INTO directory\n" +
                             "( full_path\n" +
                             ", parent_folder_full_path\n" +
                             ", entry_name\n" +
@@ -221,8 +399,8 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             ", revision)\n" +
                             "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 
-            _updateStatement = _connection.prepareStatement
-                    ("UPDATE directory\n" +
+            _updateStatement = _connection.prepareStatement(
+                            "UPDATE directory\n" +
                             "SET parent_folder_full_path = ?\n" +
                             ", entry_name = ?\n" +
                             ", old_full_path = ?\n" +
@@ -239,6 +417,28 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                             "WHERE full_path = ?;");
 
             _deleteStatement = _connection.prepareStatement("DELETE FROM directory WHERE full_path = ?;");
+
+            _selectLruStatement =
+                    _connection.prepareStatement("SELECT   curr\n" +
+                            "       , prev\n" +
+                            "       , next\n" +
+                            "  FROM lru_queue\n" +
+                            " WHERE curr = ?;");
+
+            _insertLruStatement = _connection.prepareStatement
+                    ("INSERT INTO lru_queue\n" +
+                            "( curr\n" +
+                            ", prev\n" +
+                            ", next)\n" +
+                            "VALUES (?,?,?);");
+
+            _updateLruStatement = _connection.prepareStatement
+                    ("UPDATE lru_queue\n" +
+                            "SET prev = ?\n" +
+                            ", next = ?\n" +
+                            "WHERE curr = ?;");
+
+            _deleteLruStatement = _connection.prepareStatement("DELETE FROM lru_queue WHERE curr = ?;");
         }
         catch (SQLException e)
         {
@@ -271,6 +471,22 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
             if (_deleteStatement != null && !_deleteStatement.isClosed()) {
                 _deleteStatement.close();
             }
+            if (_queryDiskUsageStatement != null && !_queryDiskUsageStatement.isClosed()){
+                _queryDiskUsageStatement.close();
+            }
+
+            if (_selectLruStatement != null && !_selectLruStatement.isClosed()) {
+                _selectLruStatement.close();
+            }
+            if (_insertLruStatement != null && !_insertLruStatement.isClosed()) {
+                _insertLruStatement.close();
+            }
+            if (_updateLruStatement != null && !_updateLruStatement.isClosed()) {
+                _updateLruStatement.close();
+            }
+            if (_deleteLruStatement != null && !_deleteLruStatement.isClosed()) {
+                _deleteLruStatement.close();
+            }
         }
         catch (SQLException e)
         {
@@ -286,6 +502,7 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     {
         try {
             createDirectoryTable();
+            createLruTable();
         }
         catch (SQLException e)
         {
@@ -339,9 +556,81 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                 "on DIRECTORY (is_modified);";
         executeSql(sql);
 
-        sql = "create index if not exists IDX_ATIME\n" +
-                "on DIRECTORY (atime);";
+        sql = "create index if not exists IDX_IS_LOCAL\n" +
+                "on DIRECTORY (is_local);";
         executeSql(sql);
     }
 
+    private void createLruTable() throws SQLException {
+        String sql =
+                "CREATE TABLE if not exists lru_queue \n" +
+                "(curr varchar(4000) PRIMARY KEY,\n" +
+                " prev varchar(4000), \n" +
+                " next varchar(4000));";
+        executeSql(sql);
+
+        sql = "insert or ignore into lru_queue (curr, next) values('.head', '.tail');";
+        executeSql(sql);
+
+        sql = "insert or ignore into lru_queue (curr, prev) values('.tail', '.head');";
+        executeSql(sql);
+    }
+
+
+    private LruEntity queryLru(String curr) throws SQLException {
+        _selectLruStatement.setString(1, curr);
+
+        ResultSet rs = null;
+        LruEntity result = null;
+        try {
+            rs = _selectLruStatement.executeQuery();
+            if (rs.next()){
+                result = new LruEntity();
+                result.setCurr(rs.getString("curr"));
+                result.setPrev(rs.getString("prev"));
+                result.setNext(rs.getString("next"));
+            }
+        }
+        finally {
+            if (rs != null && !rs.isClosed()){
+                rs.close();
+            }
+        }
+
+        return result;
+    }
+
+    private int insertLru(LruEntity entity) throws SQLException {
+        int affectedRowCnt = 0;
+
+        _insertLruStatement.setString(1, entity.getCurr());
+        _insertLruStatement.setString(2, entity.getPrev());
+        _insertLruStatement.setString(3, entity.getNext());
+
+        affectedRowCnt = _insertLruStatement.executeUpdate();
+
+        return affectedRowCnt;
+    }
+
+    private int updateLru(LruEntity entity) throws SQLException {
+        int affectedRowCnt = 0;
+
+        _updateLruStatement.setString(1, entity.getPrev());
+        _updateLruStatement.setString(2, entity.getNext());
+        _updateLruStatement.setString(3, entity.getCurr());
+
+        affectedRowCnt = _updateLruStatement.executeUpdate();
+
+        return affectedRowCnt;
+    }
+
+    private int deleteLru(String curr) throws SQLException {
+        int affectedRowCnt = 0;
+
+        _deleteLruStatement.setString(1, curr);
+
+        affectedRowCnt = _deleteLruStatement.executeUpdate();
+
+        return affectedRowCnt;
+    }
 }
