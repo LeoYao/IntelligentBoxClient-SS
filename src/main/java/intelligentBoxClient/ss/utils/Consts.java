@@ -10,4 +10,6 @@ public class Consts {
     public static final int YES = 1;
     public static final int NO = 0;
 
+    public static final String HEAD = ".head";
+    public static final String TAIL = ".tail";
 }

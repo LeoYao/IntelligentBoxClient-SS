@@ -4,6 +4,7 @@ import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dao.IDirectoryDbContext;
 import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
 import intelligentBoxClient.ss.dao.pojo.LruEntity;
+import intelligentBoxClient.ss.utils.Consts;
 import intelligentBoxClient.ss.utils.IUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +23,10 @@ import java.sql.SQLException;
 @Service
 public class DiskUsageEnforcer implements IDiskUsageEnforcer{
 
+
+    private final static int SUCCESS = 0;
+    private final static int FAIL = -1;
+    private final static int SKIP = 1;
 
     private IDirectoryDbContext _directoryDbContext;
     private IConfiguration _configuration;
@@ -47,13 +52,24 @@ public class DiskUsageEnforcer implements IDiskUsageEnforcer{
         }
     }
 
-    private boolean cleanLocalFile(String path){
+    private int cleanLocalFile(String path){
         try {
             logger.debug("Cleaning file [" + path + "]");
             DirectoryEntity directoryEntity = _directoryDbContext.querySingleEntry(path);
             if (directoryEntity == null || !directoryEntity.isLocal()){
-                return true;
+                return SUCCESS; //Not local
             }
+
+            if (isInUse(directoryEntity)){
+                logger.debug("Skipped cleaning file [" + path + "] because it is in use.");
+                return SKIP;
+            }
+
+            if (directoryEntity.isModified()){
+                logger.debug("Skipped cleaning file [" + path + "] because it is modified.");
+                return SKIP;
+            }
+
             String filePath = _configuration.getDataFolderPath() + path;
             Path filePathOutput = Paths.get(filePath);
 
@@ -61,13 +77,13 @@ public class DiskUsageEnforcer implements IDiskUsageEnforcer{
             directoryEntity.setLocal(false);
             _directoryDbContext.updateEntry(directoryEntity);
             logger.debug("Cleaned file [" + path + "]");
-            return true;
+            return SUCCESS;
         } catch (SQLException e) {
             logger.error("Failed to clean [" + path + "].", e);
-            return false;
+            return FAIL;
         } catch (IOException e) {
             logger.error("Failed to clean [" + path + "].", e);
-            return false;
+            return FAIL;
         }
     }
 
@@ -75,42 +91,48 @@ public class DiskUsageEnforcer implements IDiskUsageEnforcer{
         long maxDiskUsage = _configuration.getMaxLocalSize();
         long diskUsage;
 
-        while (true) {
-            boolean isError = true;
-            boolean inTransaction = false;
-            try {
-                inTransaction = _directoryDbContext.beginTransaction();
-                diskUsage = getDiskUsage();
+        boolean isError = true;
+        boolean inTransaction = false;
+        try {
+            inTransaction = _directoryDbContext.beginTransaction();
 
+            LruEntity toClean = _directoryDbContext.peekLru(false);
+            while (toClean != null) {
+                diskUsage = getDiskUsage();
                 if (diskUsage <= maxDiskUsage) {
                     isError = false;
                     break;
                 }
 
-                //Assumption: If one file is in LRU queue, it must not be in use.
-                LruEntity toClean = _directoryDbContext.popLru(false);
-                if (toClean == null){
-                    logger.warn("No file is in LRU queue. Perhaps all local files are in use.");
+                if (toClean.getCurr().equals(Consts.TAIL)) {
+                    logger.warn("No more files can be cleaned in LRU queue. Perhaps all local files are in use or are modified.");
+                    isError = false;
                     break;
                 }
 
-                if (!cleanLocalFile(toClean.getCurr())){
+                if (cleanLocalFile(toClean.getCurr()) == FAIL) {
                     logger.error("Failed to delete [" + toClean.getCurr() + "]");
-                    break;
+                } else if (cleanLocalFile(toClean.getCurr()) == SUCCESS){
+                    _directoryDbContext.removeLru(toClean.getCurr(), false);
                 }
 
-                isError = false;
-            } finally {
-                if (inTransaction) {
-                    if (isError){
-                        _directoryDbContext.rollbackTransaction();
-                    } else {
-                        _directoryDbContext.commitTransaction();
-                    }
+                toClean = _directoryDbContext.findLru(toClean.getNext(), false);
+            }
+        }
+        finally{
+            if (inTransaction) {
+                if (isError) {
+                    _directoryDbContext.rollbackTransaction();
+                } else {
+                    _directoryDbContext.commitTransaction();
                 }
             }
         }
 
+    }
+
+    private boolean isInUse(DirectoryEntity entity){
+        return entity.isLocked() || entity.getInUseCount() > 0;
     }
 
 }

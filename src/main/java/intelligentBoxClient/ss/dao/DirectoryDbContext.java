@@ -1,5 +1,6 @@
 package intelligentBoxClient.ss.dao;
 
+import com.sun.tools.internal.jxc.apt.Const;
 import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
 import intelligentBoxClient.ss.dao.pojo.LruEntity;
@@ -18,9 +19,6 @@ import java.util.List;
  */
 @Repository
 public class DirectoryDbContext extends SqliteContext implements IDirectoryDbContext {
-
-    public static final String HEAD = ".head";
-    public static final String TAIL = ".tail";
 
     private PreparedStatement _queryFileStatement;
     private PreparedStatement _traverseDirectoryStatement;
@@ -179,6 +177,35 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
     }
 
     @Override
+    public LruEntity findLru(String curr, boolean createTransaction) {
+        LruEntity result = null;
+        boolean inTransaction = false;
+        boolean inError = true;
+
+        try{
+            if (createTransaction) {
+                inTransaction = beginTransaction();
+            }
+
+            result = queryLru(curr);
+        } catch (SQLException e) {
+            logger.error("Falied to find.", e);
+            result = null;
+        }
+        finally {
+            if (inTransaction){
+                if(inError){
+                    rollbackTransaction();
+                } else {
+                    commitTransaction();
+                }
+            }
+        }
+
+        return result;
+    }
+
+    @Override
     public synchronized LruEntity popLru(boolean createTransaction){
         LruEntity result = null;
         boolean inTransaction = false;
@@ -188,19 +215,53 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                 inTransaction = beginTransaction();
             }
 
-            LruEntity header = queryLru(HEAD);
-            if (header == null || header.getNext().equals(TAIL)) {
+            LruEntity header = queryLru(Consts.HEAD);
+            if (header == null || header.getNext().equals(Consts.TAIL)) {
                 return null;
             }
 
             result = queryLru(header.getNext());
             header.setNext(result.getNext());
             LruEntity next = queryLru(result.getNext());
-            next.setPrev(HEAD);
+            next.setPrev(Consts.HEAD);
 
             updateLru(header);
             updateLru(next);
             deleteLru(result.getCurr());
+            inError = false;
+        } catch (SQLException e){
+            logger.error("Falied to pop.", e);
+            result = null;
+        }
+        finally {
+            if (inTransaction){
+                if(inError){
+                    rollbackTransaction();
+                } else {
+                    commitTransaction();
+                }
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public synchronized LruEntity peekLru(boolean createTransaction){
+        LruEntity result = null;
+        boolean inTransaction = false;
+        boolean inError = true;
+        try {
+            if (createTransaction) {
+                inTransaction = beginTransaction();
+            }
+
+            LruEntity header = queryLru(Consts.HEAD);
+            if (header == null || header.getNext().equals(Consts.TAIL)) {
+                return null;
+            }
+
+            result = queryLru(header.getNext());
             inError = false;
         } catch (SQLException e){
             logger.error("Falied to pop.", e);
@@ -244,9 +305,9 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
                 updateLru(next);
             }
 
-            LruEntity tail = queryLru(TAIL);
+            LruEntity tail = queryLru(Consts.TAIL);
             LruEntity prevTail = queryLru(tail.getPrev());
-            result.setNext(TAIL);
+            result.setNext(Consts.TAIL);
             result.setPrev(prevTail.getCurr());
             tail.setPrev(result.getCurr());
             prevTail.setNext(result.getCurr());
@@ -575,7 +636,6 @@ public class DirectoryDbContext extends SqliteContext implements IDirectoryDbCon
         sql = "insert or ignore into lru_queue (curr, prev) values('.tail', '.head');";
         executeSql(sql);
     }
-
 
     private LruEntity queryLru(String curr) throws SQLException {
         _selectLruStatement.setString(1, curr);
