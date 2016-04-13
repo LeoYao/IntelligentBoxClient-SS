@@ -59,8 +59,8 @@ public class Bootstrapper {
 
 
         if (result) {
-            genData(appCtx);
-            genLru(appCtx);
+            //genData(appCtx);
+            //genLru(appCtx);
 
             result &= _synchronizationWorker.start();
         }
