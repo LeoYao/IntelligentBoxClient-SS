@@ -76,6 +76,7 @@ public class DiskUsageEnforcer implements IDiskUsageEnforcer{
                         if (toClean.getCurr().equals(Consts.TAIL)) {
                             logger.warn("No more files can be cleaned in LRU queue. Perhaps all local files are in use or are modified.");
                             isError = false;
+                            needClean = false;
                             break;
                         }
                         int retClean = cleanLocalFile(toClean.getCurr());

@@ -170,7 +170,7 @@ public abstract class SqliteContext implements ISqliteContext {
             Class.forName("org.sqlite.JDBC");
             Properties prop = new Properties();
 
-            prop.setProperty(SQLiteConfig.Pragma.TRANSACTION_MODE.pragmaName, SQLiteConfig.TransactionMode.IMMEDIATE.name());
+            prop.setProperty(SQLiteConfig.Pragma.TRANSACTION_MODE.pragmaName, SQLiteConfig.TransactionMode.EXCLUSIVE.name());
             prop.setProperty(SQLiteConfig.Pragma.BUSY_TIMEOUT.pragmaName, "500");
             _connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile, prop);
 

@@ -1,6 +1,5 @@
 package intelligentBoxClient.ss.dao;
 
-import com.sun.tools.internal.jxc.apt.Const;
 import intelligentBoxClient.ss.bootstrapper.IConfiguration;
 import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
 import intelligentBoxClient.ss.dao.pojo.LruEntity;

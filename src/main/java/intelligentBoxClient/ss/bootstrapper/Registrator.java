@@ -87,8 +87,16 @@ public class Registrator implements IRegistrator {
         {
             return false;
         }
-
         request.setAccountId(accountId);
+
+        try {
+            String callbackUrl = getCallbackUrl();
+            request.setCallbackUrl(callbackUrl);
+        } catch (IOException e) {
+            logger.error(e);
+            return false;
+        }
+
         ResponseEntity<Object> response =
                 restTemplate.postForEntity("http://" + _configuration.getCnsUrl() + "/unregister",
                         request,

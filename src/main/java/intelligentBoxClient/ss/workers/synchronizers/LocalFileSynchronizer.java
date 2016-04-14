@@ -78,8 +78,6 @@ public class LocalFileSynchronizer extends FileSynchronizer{
     }
 
     private void synchronizeChange(DirectoryEntity change){
-        List<DirectoryEntity> changes = getLocalChanges();
-
         if (isInUse(change)){
             logger.debug("Skip synchronizing [" + change.getFullPath() + "] to dropbox because it is in use.");
             return;
