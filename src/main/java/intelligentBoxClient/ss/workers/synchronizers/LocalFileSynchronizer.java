@@ -55,12 +55,26 @@ public class LocalFileSynchronizer extends FileSynchronizer{
     }
 
     private List<DirectoryEntity> getLocalChanges(){
+        boolean inTransaction = false;
+        List<DirectoryEntity> result = new ArrayList<>();
         try {
-            return _directoryDbContext.queryChangedEntries();
+            inTransaction = _directoryDbContext.beginTransaction();
+
+            if (!inTransaction){
+                logger.warn("Skipped getLocalChanges because transaction is failed to begin.");
+            } else {
+                result = _directoryDbContext.queryChangedEntries();
+            }
         } catch (SQLException e) {
             logger.warn("Failed to get local changes", e);
             return new ArrayList<DirectoryEntity>();
+        } finally {
+            if(inTransaction){
+                _directoryDbContext.rollbackTransaction(); //Nothing is changed.
+            }
         }
+
+        return result;
     }
 
     private void synchronizeChange(DirectoryEntity change){
@@ -76,6 +90,12 @@ public class LocalFileSynchronizer extends FileSynchronizer{
             addEntry(change);
         }
 
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            logger.warn("Failed to sleep.");
+        }
+
     }
 
     private void deleteEntry(DirectoryEntity entity){
@@ -85,19 +105,23 @@ public class LocalFileSynchronizer extends FileSynchronizer{
         try {
             logger.debug("Deleting [" + entity.getFullPath() + "]");
             inTransaction = _directoryDbContext.beginTransaction();
-            DirectoryEntity latestEntity = _directoryDbContext.querySingleEntry(entity.getFullPath());
-            if (isInUse(latestEntity))
-            {
-                logger.debug("Skip deleting [" + entity.getFullPath() + "] because it is in use.");
-                return;
+
+            if (!inTransaction) {
+                isError = true;
+                logger.warn("Skipped deleting [" + entity.getFullPath() + "] because transaction is failed to begin.");
+            } else {
+                DirectoryEntity latestEntity = _directoryDbContext.querySingleEntry(entity.getFullPath());
+                if (isInUse(latestEntity)) {
+                    logger.debug("Skip deleting [" + entity.getFullPath() + "] because it is in use.");
+                    return;
+                }
+
+                _dropboxClient.deleteFile(entity.getFullPath());
+
+                _directoryDbContext.deleteEntry(entity.getFullPath());
+
+                logger.debug("Deleted [" + entity.getFullPath() + "]");
             }
-
-            _dropboxClient.deleteFile(entity.getFullPath());
-
-            _directoryDbContext.deleteEntry(entity.getFullPath());
-
-            logger.debug("Deleted [" + entity.getFullPath() + "]");
-
         } catch (SQLException e) {
             logger.error("Failed to delete file [" + entity.getFullPath() + "]", e);
             isError = true;
@@ -125,30 +149,34 @@ public class LocalFileSynchronizer extends FileSynchronizer{
         try {
             logger.debug("Adding [" + entity.getFullPath() + "]");
             inTransaction = _directoryDbContext.beginTransaction();
-            DirectoryEntity latestEntity = _directoryDbContext.querySingleEntry(entity.getFullPath());
-            if (isInUse(latestEntity))
-            {
-                logger.debug("Skipped adding [" + entity.getFullPath() + "] because it is in use.");
+            if (!inTransaction) {
+                isError = true;
+                logger.warn("Skipped adding [" + entity.getFullPath() + "] because transaction is failed to begin.");
             } else {
-
-                if (latestEntity.getType() == Consts.FILE) {
-                    FileMetadata metadata = _dropboxClient.uploadFile(entity.getFullPath(), _configuration.getDataFolderPath() + entity.getFullPath());
-
-                    latestEntity.setSize(metadata.getSize());
-                    latestEntity.setModified(false);
-                    latestEntity.setRevision(metadata.getRev());
-
-                    _directoryDbContext.updateEntry(latestEntity);
-
-                    logger.debug("Uploaded file [" + entity.getFullPath() + "]");
+                DirectoryEntity latestEntity = _directoryDbContext.querySingleEntry(entity.getFullPath());
+                if (isInUse(latestEntity)) {
+                    logger.debug("Skipped adding [" + entity.getFullPath() + "] because it is in use.");
                 } else {
-                    if (_dropboxClient.createFolder(entity.getFullPath())) {
+
+                    if (latestEntity.getType() == Consts.FILE) {
+                        FileMetadata metadata = _dropboxClient.uploadFile(entity.getFullPath(), _configuration.getDataFolderPath() + entity.getFullPath());
+
+                        latestEntity.setSize(metadata.getSize());
                         latestEntity.setModified(false);
+                        latestEntity.setRevision(metadata.getRev());
+
                         _directoryDbContext.updateEntry(latestEntity);
-                        logger.debug("Created folder [" + entity.getFullPath() + "]");
+
+                        logger.debug("Uploaded file [" + entity.getFullPath() + "]");
                     } else {
-                        isError = true;
-                        logger.error("Failed to created folder [" + entity.getFullPath() + "]");
+                        if (_dropboxClient.createFolder(entity.getFullPath())) {
+                            latestEntity.setModified(false);
+                            _directoryDbContext.updateEntry(latestEntity);
+                            logger.debug("Created folder [" + entity.getFullPath() + "]");
+                        } else {
+                            isError = true;
+                            logger.error("Failed to created folder [" + entity.getFullPath() + "]");
+                        }
                     }
                 }
             }

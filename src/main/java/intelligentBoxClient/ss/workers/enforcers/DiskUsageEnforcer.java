@@ -43,6 +43,75 @@ public class DiskUsageEnforcer implements IDiskUsageEnforcer{
         _configuration = configuration;
     }
 
+    public void enforce() {
+        long maxDiskUsage = _configuration.getMaxLocalSize();
+        long diskUsage;
+
+        boolean isError = true;
+        boolean inTransaction = false;
+        boolean needClean = true;
+
+        int maxRetryTransactionTimes = 100;
+        int triedTransactionTimes = 0;
+        while (needClean) {
+            try {
+                inTransaction = _directoryDbContext.beginTransaction();
+
+                if (!inTransaction){
+                    logger.warn("Transaction is failed to begin. Attempted times [" + triedTransactionTimes + "]");
+                    if (triedTransactionTimes >= maxRetryTransactionTimes){
+                        needClean = false;
+                        logger.warn("Too many attempts to begin a transaction. Skip this round");
+                    }
+                } else {
+                    diskUsage = getDiskUsage();
+                    if (diskUsage <= maxDiskUsage) {
+                        needClean = false;
+                        isError = false;
+                        continue;
+                    }
+
+                    LruEntity toClean = _directoryDbContext.peekLru(false);
+                    while (toClean != null) {
+                        if (toClean.getCurr().equals(Consts.TAIL)) {
+                            logger.warn("No more files can be cleaned in LRU queue. Perhaps all local files are in use or are modified.");
+                            isError = false;
+                            break;
+                        }
+                        int retClean = cleanLocalFile(toClean.getCurr());
+                        if (retClean == FAIL) {
+                            logger.error("Failed to delete [" + toClean.getCurr() + "]");
+                        } else if (retClean == SUCCESS) {
+                            _directoryDbContext.removeLru(toClean.getCurr(), false);
+                            isError = false;
+                            break;
+                        }
+
+                        toClean = _directoryDbContext.findLru(toClean.getNext(), false);
+                    }
+                }
+            } finally {
+                if (inTransaction) {
+                    if (isError) {
+                        _directoryDbContext.rollbackTransaction();
+                    } else {
+                        _directoryDbContext.commitTransaction();
+                    }
+                }
+            }
+
+            if (needClean) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    logger.warn("Failed to sleep");
+                }
+            }
+        }
+
+    }
+
+
     private long getDiskUsage(){
         try {
             return _directoryDbContext.queryDiskUsage();
@@ -85,50 +154,6 @@ public class DiskUsageEnforcer implements IDiskUsageEnforcer{
             logger.error("Failed to clean [" + path + "].", e);
             return FAIL;
         }
-    }
-
-    public void enforce() {
-        long maxDiskUsage = _configuration.getMaxLocalSize();
-        long diskUsage;
-
-        boolean isError = true;
-        boolean inTransaction = false;
-        try {
-            inTransaction = _directoryDbContext.beginTransaction();
-
-            LruEntity toClean = _directoryDbContext.peekLru(false);
-            while (toClean != null) {
-                diskUsage = getDiskUsage();
-                if (diskUsage <= maxDiskUsage) {
-                    isError = false;
-                    break;
-                }
-
-                if (toClean.getCurr().equals(Consts.TAIL)) {
-                    logger.warn("No more files can be cleaned in LRU queue. Perhaps all local files are in use or are modified.");
-                    isError = false;
-                    break;
-                }
-
-                if (cleanLocalFile(toClean.getCurr()) == FAIL) {
-                    logger.error("Failed to delete [" + toClean.getCurr() + "]");
-                } else if (cleanLocalFile(toClean.getCurr()) == SUCCESS){
-                    _directoryDbContext.removeLru(toClean.getCurr(), false);
-                }
-
-                toClean = _directoryDbContext.findLru(toClean.getNext(), false);
-            }
-        }
-        finally{
-            if (inTransaction) {
-                if (isError) {
-                    _directoryDbContext.rollbackTransaction();
-                } else {
-                    _directoryDbContext.commitTransaction();
-                }
-            }
-        }
-
     }
 
     private boolean isInUse(DirectoryEntity entity){

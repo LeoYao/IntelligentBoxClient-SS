@@ -6,11 +6,13 @@ import intelligentBoxClient.ss.dao.pojo.DirectoryEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
+import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteErrorCode;
 
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by yaohx on 3/22/2016.
@@ -28,7 +30,7 @@ public abstract class SqliteContext implements ISqliteContext {
         _configuration = configuration;
     }
 
-    public boolean open(String dbFile) {
+    public synchronized boolean open(String dbFile) {
         if (logger.isDebugEnabled()) {
             logger.debug("Openning DB [" + dbFile + "].");
         }
@@ -56,7 +58,7 @@ public abstract class SqliteContext implements ISqliteContext {
         return true;
     }
 
-    public boolean close() {
+    public synchronized boolean close() {
 
         logger.debug("Closing DB...");
         try {
@@ -76,11 +78,11 @@ public abstract class SqliteContext implements ISqliteContext {
         return true;
     }
 
-    public boolean beginTransaction(int maxRetryTimes, int retryInterval) {
+    public synchronized boolean beginTransaction(int maxRetryTimes, int retryInterval) {
         for (int i = 0; i <= maxRetryTimes; ++i) {
             try {
                 _connection.setAutoCommit(false);
-                _lockStatement.executeUpdate();
+                //_lockStatement.executeUpdate();
                 return true;
             } catch (SQLException e) {
                 if (SQLiteErrorCode.SQLITE_BUSY.code != e.getErrorCode() || i >= maxRetryTimes) {
@@ -99,38 +101,66 @@ public abstract class SqliteContext implements ISqliteContext {
         return false;
     }
 
-    public boolean beginTransaction(){
+    public synchronized boolean beginTransaction(){
         return beginTransaction(_configuration.getDbMaxRetryTimes(), _configuration.getDbMaxRetryTimes());
     }
 
-    public boolean commitTransaction() {
-        try{
-            if (!_connection.getAutoCommit()) {
-                _connection.commit();
-                _connection.setAutoCommit(true);
+    public synchronized boolean commitTransaction() {
+
+        int maxRetryTimes = 100;
+        int retryInterval = 250;
+
+        for (int i = 0; i <= maxRetryTimes; ++i) {
+            try {
+                if (!_connection.getAutoCommit()) {
+                    _connection.setAutoCommit(true);
+                }
+                return true;
+            } catch (SQLException e) {
+                if (SQLiteErrorCode.SQLITE_BUSY.code != e.getErrorCode() || i >= maxRetryTimes) {
+                    logger.error("Failed to commit a transaction.", e);
+                    return false;
+                }
+                try {
+                    logger.debug("Failed to commit a transaction. Retried times [" + i + "]", e);
+                    Thread.sleep(retryInterval);
+                }
+                catch (InterruptedException ex){
+                    logger.warn("Failed to sleep.", ex);
+                }
             }
-        }
-        catch (SQLException ex)
-        {
-            logger.warn("Failed to commit.", ex);
-            return false;
         }
 
         return true;
     }
 
-    public boolean rollbackTransaction() {
-        try{
-            if (!_connection.getAutoCommit()) {
-                _connection.rollback();
-                _connection.setAutoCommit(true);
+    public synchronized boolean rollbackTransaction() {
+
+        int maxRetryTimes = 100;
+        int retryInterval = 250;
+
+        for (int i = 0; i <= maxRetryTimes; ++i) {
+            try {
+                if (!_connection.getAutoCommit()) {
+                    _connection.rollback();
+                    _connection.setAutoCommit(true);
+                }
+                return true;
+            } catch (SQLException e) {
+                if (SQLiteErrorCode.SQLITE_BUSY.code != e.getErrorCode() || i >= maxRetryTimes) {
+                    logger.error("Failed to rollback a transaction.", e);
+                    return false;
+                }
+                try {
+                    logger.debug("Failed to rollback a transaction. Retried times [" + i + "]", e);
+                    Thread.sleep(retryInterval);
+                }
+                catch (InterruptedException ex){
+                    logger.warn("Failed to sleep.", ex);
+                }
             }
         }
-        catch (SQLException ex)
-        {
-            logger.warn("Failed to rollback.", ex);
-            return false;
-        }
+
 
         return true;
     }
@@ -138,7 +168,12 @@ public abstract class SqliteContext implements ISqliteContext {
     private void connect(String dbFile) throws ClassNotFoundException, SQLException {
         if (_connection == null || _connection.isClosed()) {
             Class.forName("org.sqlite.JDBC");
-            _connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile);
+            Properties prop = new Properties();
+
+            prop.setProperty(SQLiteConfig.Pragma.TRANSACTION_MODE.pragmaName, SQLiteConfig.TransactionMode.IMMEDIATE.name());
+            prop.setProperty(SQLiteConfig.Pragma.BUSY_TIMEOUT.pragmaName, "500");
+            _connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile, prop);
+
         }
     }
 

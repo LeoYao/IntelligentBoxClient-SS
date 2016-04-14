@@ -28,8 +28,12 @@ public class NotificationController {
     @RequestMapping(value="/notify", method = RequestMethod.POST)
     public void notify(@RequestBody Notification notification)
     {
+        boolean inTransaction = false;
         try {
-            _notificationDbContext.setRemoteChanged();
+            inTransaction = _notificationDbContext.beginTransaction();
+            if (inTransaction)
+                _notificationDbContext.setRemoteChanged();
+
         } catch (Exception e) {
             logger.error("Failed to set REMOTE_CHANGED table.", e);
         }
