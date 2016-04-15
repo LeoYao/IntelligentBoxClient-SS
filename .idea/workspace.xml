@@ -3,11 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="588569fd-a8e5-46ab-862d-17dab1c2609f" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/controllers/NotificationController.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/controllers/NotificationController.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/SqliteContext.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/SqliteContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java" afterPath="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java" />
     </list>
     <ignored path="IntelligentBoxClient-SS.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,15 +31,12 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="DiskUsageEnforcer.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="DiskUsageEnforcer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
+            <state relative-caret-position="240">
               <caret line="83" column="43" selection-start-line="83" selection-start-column="43" selection-end-line="83" selection-end-column="43" />
-              <folding>
-                <element signature="e#5733#5734#0" expanded="true" />
-                <element signature="e#5803#5804#0" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -51,9 +44,11 @@
       <file leaf-file-name="NotificationController.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/controllers/NotificationController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
+            <state relative-caret-position="375">
               <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -61,9 +56,11 @@
       <file leaf-file-name="RemoteFileSynchronizer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="203">
+            <state relative-caret-position="3165">
               <caret line="237" column="62" selection-start-line="237" selection-start-column="62" selection-end-line="237" selection-end-column="62" />
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -71,21 +68,43 @@
       <file leaf-file-name="DirectoryDbContext.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1875">
-              <caret line="290" column="41" selection-start-line="290" selection-start-column="41" selection-end-line="290" selection-end-column="41" />
+            <state relative-caret-position="625">
+              <caret line="290" column="13" selection-start-line="290" selection-start-column="13" selection-end-line="290" selection-end-column="13" />
               <folding>
-                <marker date="1460575599000" expanded="true" signature="12041:12859" placeholder="SELECT full_... " />
-                <marker date="1460575599000" expanded="true" signature="12957:13849" placeholder="SELECT full_... " />
-                <marker date="1460575599000" expanded="true" signature="13971:14850" placeholder="SELECT full_... " />
-                <marker date="1460575599000" expanded="true" signature="14974:15167" placeholder="SELECT full_... " />
-                <marker date="1460575599000" expanded="true" signature="15263:16005" placeholder="INSERT INTO directory... " />
-                <marker date="1460575599000" expanded="true" signature="16101:16828" placeholder="UPDATE direc... " />
-                <marker date="1460575599000" expanded="true" signature="16895:16936" placeholder="DELETE FROM " />
-                <marker date="1460575599000" expanded="true" signature="17026:17236" placeholder="SELECT curr\... " />
-                <marker date="1460575599000" expanded="true" signature="17327:17521" placeholder="INSERT INTO lru_queue... " />
-                <marker date="1460575599000" expanded="true" signature="17612:17769" placeholder="UPDATE lru_q... " />
-                <marker date="1460575599000" expanded="true" signature="17839:17875" placeholder="DELETE FROM " />
+                <marker date="1460677571000" expanded="true" signature="11996:12814" placeholder="SELECT full_... " />
+                <marker date="1460677571000" expanded="true" signature="12912:13804" placeholder="SELECT full_... " />
+                <marker date="1460677571000" expanded="true" signature="13926:14805" placeholder="SELECT full_... " />
+                <marker date="1460677571000" expanded="true" signature="14929:15122" placeholder="SELECT SUM(s... directory" />
+                <marker date="1460677571000" expanded="true" signature="15218:15960" placeholder="INSERT INTO directory... " />
+                <marker date="1460677571000" expanded="true" signature="16056:16783" placeholder="UPDATE direc... " />
+                <marker date="1460677571000" expanded="true" signature="16850:16891" placeholder="DELETE FROM " />
+                <marker date="1460677571000" expanded="true" signature="16981:17191" placeholder="SELECT curr\... " />
+                <marker date="1460677571000" expanded="true" signature="17282:17476" placeholder="INSERT INTO lru_queue... " />
+                <marker date="1460677571000" expanded="true" signature="17567:17724" placeholder="UPDATE lru_q... " />
+                <marker date="1460677571000" expanded="true" signature="17794:17830" placeholder="DELETE FROM " />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SqliteContext.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/SqliteContext.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="280">
+              <caret line="173" column="12" selection-start-line="173" selection-start-column="12" selection-end-line="173" selection-end-column="12" />
+              <folding>
+                <marker date="1460749676000" expanded="true" signature="5883:5908" placeholder="UPDATE lock " />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LocalFileSynchronizer.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="269">
+              <caret line="91" column="30" selection-start-line="91" selection-start-column="30" selection-end-line="91" selection-end-column="30" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -93,11 +112,12 @@
       <file leaf-file-name="FileSynchronizer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/FileSynchronizer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="282">
+            <state relative-caret-position="1050">
               <caret line="78" column="4" selection-start-line="78" selection-start-column="4" selection-end-line="80" selection-end-column="5" />
               <folding>
-                <element signature="e#3390#3391#0" expanded="true" />
-                <element signature="e#3460#3461#0" expanded="true" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#522#523#0" expanded="false" />
+                <element signature="e#552#553#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -108,7 +128,9 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="585">
               <caret line="47" column="30" selection-start-line="47" selection-start-column="30" selection-end-line="47" selection-end-column="30" />
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -188,8 +210,8 @@
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/controllers/NotificationController.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/SqliteContext.java" />
         <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/SqliteContext.java" />
       </list>
     </option>
   </component>
@@ -277,36 +299,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="PackagesPane" />
-      <pane id="Scope">
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="IntelligentBoxClient-SS">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="IntelligentBoxClient-SS">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -495,6 +487,36 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="bootstrapper" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="IntelligentBoxClient-SS">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="IntelligentBoxClient-SS">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -694,27 +716,27 @@
     <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32892805" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32452276" sideWeight="0.49676898" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32599118" sideWeight="0.5048465" order="11" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.113893375" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.115508884" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32599118" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32452276" sideWeight="0.4951535" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3235725" sideWeight="0.4951535" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2197092" sideWeight="0.49237472" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32892805" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24968234" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22051696" sideWeight="0.5076253" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3979442" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32452276" sideWeight="0.49676898" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32892805" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="UnknownFeatures">
@@ -994,63 +1016,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="675">
           <caret line="49" column="26" selection-start-line="49" selection-start-column="11" selection-end-line="49" selection-end-column="26" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#2237#2238#0" expanded="false" />
-            <element signature="e#2269#2270#0" expanded="false" />
-            <element signature="e#2317#2318#0" expanded="false" />
-            <element signature="e#2358#2359#0" expanded="false" />
-            <element signature="e#2396#2397#0" expanded="false" />
-            <element signature="e#2459#2460#0" expanded="false" />
-            <element signature="e#2513#2514#0" expanded="false" />
-            <element signature="e#2560#2561#0" expanded="false" />
-            <element signature="e#2607#2608#0" expanded="false" />
-            <element signature="e#2651#2652#0" expanded="false" />
-            <element signature="e#2824#2825#0" expanded="false" />
-            <element signature="e#2857#2858#0" expanded="false" />
-            <element signature="e#2907#2908#0" expanded="false" />
-            <element signature="e#2950#2951#0" expanded="false" />
-            <element signature="e#2978#2979#0" expanded="false" />
-            <element signature="e#3006#3007#0" expanded="false" />
-            <element signature="e#3043#3044#0" expanded="false" />
-            <element signature="e#3076#3077#0" expanded="false" />
-            <element signature="e#3105#3106#0" expanded="false" />
-            <element signature="e#3133#3134#0" expanded="false" />
-            <element signature="e#3171#3172#0" expanded="false" />
-            <element signature="e#3204#3205#0" expanded="false" />
-            <element signature="e#3239#3240#0" expanded="false" />
-            <element signature="e#3268#3269#0" expanded="false" />
-            <element signature="e#3313#3314#0" expanded="false" />
-            <element signature="e#3348#3349#0" expanded="false" />
-            <element signature="e#3387#3388#0" expanded="false" />
-            <element signature="e#3437#3438#0" expanded="false" />
-            <element signature="e#3472#3473#0" expanded="false" />
-            <element signature="e#3501#3502#0" expanded="false" />
-            <element signature="e#3546#3547#0" expanded="false" />
-            <element signature="e#3581#3582#0" expanded="false" />
-            <element signature="e#3621#3622#0" expanded="false" />
-            <element signature="e#3671#3672#0" expanded="false" />
-            <element signature="e#3704#3705#0" expanded="false" />
-            <element signature="e#3736#3737#0" expanded="false" />
-            <element signature="e#3783#3784#0" expanded="false" />
-            <element signature="e#3824#3825#0" expanded="false" />
-            <element signature="e#3859#3860#0" expanded="false" />
-            <element signature="e#3893#3894#0" expanded="false" />
-            <element signature="e#3944#3945#0" expanded="false" />
-            <element signature="e#3989#3990#0" expanded="false" />
-            <element signature="e#4021#4022#0" expanded="false" />
-            <element signature="e#4052#4053#0" expanded="false" />
-            <element signature="e#4097#4098#0" expanded="false" />
-            <element signature="e#4136#4137#0" expanded="false" />
-            <element signature="e#4170#4171#0" expanded="false" />
-            <element signature="e#4203#4204#0" expanded="false" />
-            <element signature="e#4252#4253#0" expanded="false" />
-            <element signature="e#4295#4296#0" expanded="false" />
-            <element signature="e#4330#4331#0" expanded="false" />
-            <element signature="e#4364#4365#0" expanded="false" />
-            <element signature="e#4414#4415#0" expanded="false" />
-            <element signature="e#4459#4460#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1058,7 +1023,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1082,17 +1046,17 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="32" column="71" selection-start-line="32" selection-start-column="71" selection-end-line="32" selection-end-column="71" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/FileSynchronizer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
+        <state relative-caret-position="1050">
           <caret line="78" column="4" selection-start-line="78" selection-start-column="4" selection-end-line="80" selection-end-column="5" />
           <folding>
-            <element signature="e#3390#3391#0" expanded="true" />
-            <element signature="e#3460#3461#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#522#523#0" expanded="false" />
+            <element signature="e#552#553#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1101,7 +1065,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="585">
           <caret line="47" column="30" selection-start-line="47" selection-start-column="30" selection-end-line="47" selection-end-column="30" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1109,7 +1075,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="52" column="30" selection-start-line="52" selection-start-column="30" selection-end-line="52" selection-end-column="30" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1133,17 +1098,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/controllers/NotificationController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
+        <state relative-caret-position="375">
           <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/RemoteFileSynchronizer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
+        <state relative-caret-position="3165">
           <caret line="237" column="62" selection-start-line="237" selection-start-column="62" selection-end-line="237" selection-end-column="62" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1151,58 +1120,52 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="14" column="12" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/SqliteContext.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-240">
-          <caret line="60" column="23" selection-start-line="60" selection-start-column="23" selection-end-line="60" selection-end-column="23" />
-          <folding>
-            <marker date="1460606570000" expanded="true" signature="5885:5910" placeholder="UPDATE lock " />
-          </folding>
+        <state relative-caret-position="240">
+          <caret line="83" column="43" selection-start-line="83" selection-start-column="43" selection-end-line="83" selection-end-column="43" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/DirectoryDbContext.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1875">
-          <caret line="290" column="41" selection-start-line="290" selection-start-column="41" selection-end-line="290" selection-end-column="41" />
+        <state relative-caret-position="625">
+          <caret line="290" column="13" selection-start-line="290" selection-start-column="13" selection-end-line="290" selection-end-column="13" />
           <folding>
-            <marker date="1460575599000" expanded="true" signature="12041:12859" placeholder="SELECT full_... " />
-            <marker date="1460575599000" expanded="true" signature="12957:13849" placeholder="SELECT full_... " />
-            <marker date="1460575599000" expanded="true" signature="13971:14850" placeholder="SELECT full_... " />
-            <marker date="1460575599000" expanded="true" signature="14974:15167" placeholder="SELECT full_... " />
-            <marker date="1460575599000" expanded="true" signature="15263:16005" placeholder="INSERT INTO directory... " />
-            <marker date="1460575599000" expanded="true" signature="16101:16828" placeholder="UPDATE direc... " />
-            <marker date="1460575599000" expanded="true" signature="16895:16936" placeholder="DELETE FROM " />
-            <marker date="1460575599000" expanded="true" signature="17026:17236" placeholder="SELECT curr\... " />
-            <marker date="1460575599000" expanded="true" signature="17327:17521" placeholder="INSERT INTO lru_queue... " />
-            <marker date="1460575599000" expanded="true" signature="17612:17769" placeholder="UPDATE lru_q... " />
-            <marker date="1460575599000" expanded="true" signature="17839:17875" placeholder="DELETE FROM " />
+            <marker date="1460677571000" expanded="true" signature="11996:12814" placeholder="SELECT full_... " />
+            <marker date="1460677571000" expanded="true" signature="12912:13804" placeholder="SELECT full_... " />
+            <marker date="1460677571000" expanded="true" signature="13926:14805" placeholder="SELECT full_... " />
+            <marker date="1460677571000" expanded="true" signature="14929:15122" placeholder="SELECT SUM(s... directory" />
+            <marker date="1460677571000" expanded="true" signature="15218:15960" placeholder="INSERT INTO directory... " />
+            <marker date="1460677571000" expanded="true" signature="16056:16783" placeholder="UPDATE direc... " />
+            <marker date="1460677571000" expanded="true" signature="16850:16891" placeholder="DELETE FROM " />
+            <marker date="1460677571000" expanded="true" signature="16981:17191" placeholder="SELECT curr\... " />
+            <marker date="1460677571000" expanded="true" signature="17282:17476" placeholder="INSERT INTO lru_queue... " />
+            <marker date="1460677571000" expanded="true" signature="17567:17724" placeholder="UPDATE lru_q... " />
+            <marker date="1460677571000" expanded="true" signature="17794:17830" placeholder="DELETE FROM " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/dao/SqliteContext.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="173" column="12" selection-start-line="173" selection-start-column="12" selection-end-line="173" selection-end-column="12" />
+          <folding>
+            <marker date="1460749676000" expanded="true" signature="5883:5908" placeholder="UPDATE lock " />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/synchronizers/LocalFileSynchronizer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
-          <caret line="100" column="52" selection-start-line="100" selection-start-column="52" selection-end-line="100" selection-end-column="52" />
-          <folding>
-            <element signature="method#deleteEntry#0;class#LocalFileSynchronizer#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/intelligentBoxClient/ss/workers/enforcers/DiskUsageEnforcer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="83" column="43" selection-start-line="83" selection-start-column="43" selection-end-line="83" selection-end-column="43" />
-          <folding>
-            <element signature="e#5733#5734#0" expanded="true" />
-            <element signature="e#5803#5804#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="269">
+          <caret line="91" column="30" selection-start-line="91" selection-start-column="30" selection-end-line="91" selection-end-column="30" />
+          <folding />
         </state>
       </provider>
     </entry>
